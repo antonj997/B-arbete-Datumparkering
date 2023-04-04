@@ -1,33 +1,39 @@
 ﻿function initMap() {
-    var map = new google.maps.Map(document.getElementById("map"), {
+    var map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 63.1766832, lng: 14.636068099999989 },
         zoom: 20,
-        mapTypeId: "roadmap",
-        mapId: "869fd3c6510ec622",
-        disableDefaultUI: true,
-    });
-
-    var marker = new google.maps.Marker({
-        map: map,
-        title: "Your Location",
+        mapTypeId: 'roadmap',
+        mapId: '869fd3c6510ec622',
+        disableDefaultUI: true
     });
 
     // Define the geocoder
     var geocoder = new google.maps.Geocoder();
 
-    // Track user's location and update map and closest address
-    navigator.geolocation.watchPosition(
-        function (position) {
+    // Track the user's location and update the map as the user moves
+    if (navigator.geolocation) {
+        var currentLocationMarker = null;
+        var currentLocation = null;
+        navigator.geolocation.watchPosition(function (position) {
             var pos = {
                 lat: position.coords.latitude,
-                lng: position.coords.longitude,
+                lng: position.coords.longitude
             };
 
-            marker.setPosition(pos);
-            map.setCenter(pos);
+            // Update the current location marker
+            if (!currentLocationMarker) {
+                currentLocationMarker = new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    title: 'Your Location'
+                });
+            } else {
+                currentLocationMarker.setPosition(pos);
+            }
 
-            // Find the closest address to the current location
-            geocoder.geocode({ location: pos }, function (results, status) {
+            // Update the current location and find the closest address
+            currentLocation = new google.maps.LatLng(pos.lat, pos.lng);
+            geocoder.geocode({ location: currentLocation }, function (results, status) {
                 if (status === "OK") {
                     if (results[0]) {
                         console.log(results[0].formatted_address);
@@ -38,10 +44,15 @@
                     console.log("Geocoder failed due to: " + status);
                 }
             });
-        },
-        function () {
+
+            // Center the map on the current location
+            map.setCenter(pos);
+        }, function () {
             // If geolocation is not enabled, default to center of map
             map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
-        }
-    );
+        }, { enableHighAccuracy: true, maximumAge: 3000, timeout: 5000 });
+    } else {
+        // If geolocation is not supported, default to center of map
+        map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
+    }
 }
