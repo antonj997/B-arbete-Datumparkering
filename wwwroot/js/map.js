@@ -7,55 +7,41 @@
         disableDefaultUI: true,
     });
 
-    // Define the geocoder
-    var geocoder = new google.maps.Geocoder();
-
-    // Define the marker
     var marker = new google.maps.Marker({
         map: map,
         title: "Your Location",
     });
 
-    // Define the info window
-    var infoWindow = new google.maps.InfoWindow();
+    // Define the geocoder
+    var geocoder = new google.maps.Geocoder();
 
-    // Use watchPosition to track the user's location
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(
-            function (position) {
-                var pos = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                };
+    // Track user's location and update map and closest address
+    navigator.geolocation.watchPosition(
+        function (position) {
+            var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+            };
 
-                // Update the marker position
-                marker.setPosition(pos);
+            marker.setPosition(pos);
+            map.setCenter(pos);
 
-                // Update the map center
-                map.setCenter(pos);
-
-                // Find the closest address to the current location
-                geocoder.geocode({ location: pos }, function (results, status) {
-                    if (status === "OK") {
-                        if (results[0]) {
-                            // Update the info window content
-                            infoWindow.setContent(results[0].formatted_address);
-                            infoWindow.open(map, marker);
-                        } else {
-                            console.log("No results found");
-                        }
+            // Find the closest address to the current location
+            geocoder.geocode({ location: pos }, function (results, status) {
+                if (status === "OK") {
+                    if (results[0]) {
+                        console.log(results[0].formatted_address);
                     } else {
-                        console.log("Geocoder failed due to: " + status);
+                        console.log("No results found");
                     }
-                });
-            },
-            function () {
-                // If geolocation is not enabled, default to center of map
-                map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
-            }
-        );
-    } else {
-        // If geolocation is not supported, default to center of map
-        map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
-    }
+                } else {
+                    console.log("Geocoder failed due to: " + status);
+                }
+            });
+        },
+        function () {
+            // If geolocation is not enabled, default to center of map
+            map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
+        }
+    );
 }
