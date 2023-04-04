@@ -13,8 +13,13 @@ namespace Datumparkering.Controllers
             _logger = logger;
         }
 
+            public DateTime GetTodaysDate()
+            {
+                return DateTime.Now.Date;
+            }
         public IActionResult Index()
         {
+            ViewBag.TodaysDate = GetTodaysDate();
             return View();
         }
 
