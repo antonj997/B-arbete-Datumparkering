@@ -4,9 +4,10 @@
 <script src="~/js/map.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApUpHKgUAzTHszFAJQfKy8R_ZhZqY2DRs&callback=initMap"
         async defer></script>
+<link href="~/css/site.css" rel="stylesheet" />
 
-<div>
-    @Html.TextBox("todaysDate")
+<div class="date-container">
+    <label>Dagens datum är: @ViewBag.TodaysDate.ToString("yyyy-MM-dd")</label>
 </div>
 
 
