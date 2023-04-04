@@ -2,7 +2,9 @@
     var map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 63.1766832, lng: 14.636068099999989 },
         zoom: 20,
+        mapTypeId: 'roadmap',
         mapId: '869fd3c6510ec622'
+        
     });
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
