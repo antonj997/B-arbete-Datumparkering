@@ -27,11 +27,11 @@ namespace Datumparkering.Controllers
         {
             if (IsTodayDateEven())
             {
-                return "Inatt slår det över till ojämnt datum, det innebär att du endast får parkera på gatunummer med jämnt husnummer";
+                return "Inatt slår det över till ojämnt datum, det innebär att du endast får parkera på gatunummer med jämnt husnummer.";
             }
             else
             {
-                return "Inatt slår det över till jämnt datum, det innebär att du endast får parkera på gatunummer med ojämnt husnummer";
+                return "Inatt slår det över till jämnt datum, det innebär att du endast får parkera på gatunummer med ojämnt husnummer.";
             }
         }
 
