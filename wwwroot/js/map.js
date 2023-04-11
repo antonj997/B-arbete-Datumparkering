@@ -79,45 +79,17 @@
         strokeWeight: 2
     });
     boundryCoords.setMap(map);
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function (position) {
-                var pos = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                };
-
-                var marker = new google.maps.Marker({
-                    position: pos,
-                    map: map,
-                    title: "Your Location",
-                });
-
-                map.setCenter(pos);
-            },
-            function () {
-                // If geolocation is not enabled, default to center of map
-                map.setCenter(center);
-            }
-        );
-    } else {
-        // If geolocation is not supported, default to center of map
-        map.setCenter(center);
-    }
-
-}
 
 var reqcount = 0;
 
 navigator.geolocation.watchPosition(successCallback, errorCallback, options);
 
 function successCallback(position) {
-    const { accuracy, latitude, longitude, altitude, heading, speed } = position.coords;
+    const { accuracy, latitude, longitude, heading, speed } = position.coords;
     // Show a map centered at latitude / longitude.
     reqcount++;
     details.innerHTML = "Accuracy: " + accuracy + "<br>";
     details.innerHTML += "Latitude: " + latitude + " | Longitude: " + longitude + "<br>";
-    details.innerHTML += "Altitude: " + altitude + "<br>";
     details.innerHTML += "Heading: " + heading + "<br>";
     details.innerHTML += "Speed: " + speed + "<br>";
     details.innerHTML += "reqcount: " + reqcount;
