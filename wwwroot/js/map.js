@@ -5,7 +5,7 @@
         mapTypeId: 'roadmap',
         mapId: '869fd3c6510ec622'
     });
-    var baoundaryCoords = [
+    var boundryCoords = [
         { lat: 63.12152322147656, lng: 14.766334845860246 },
         { lat: 63.12961437522173, lng: 14.792462093080598 },
         { lat: 63.13626831169727, lng: 14.775428860086112 },
@@ -29,14 +29,14 @@
         { lat: 63.16389705742495, lng: 14.592092129025437 },
         { lat: 63.121792308944016, lng: 14.76607945140348 }
     ];
-     baoundaryCoords = new google.maps.Polyline({
-        path: baoundaryCoords,
+     boundryCoords = new google.maps.Polyline({
+        path: boundryCoords,
         geodesic: true,
         strokeColor: "#FF0000",
         strokeOpacity: 1.0,
         strokeWeight: 2
     });
-    baoundaryCoords.setMap(map);
+    boundryCoords.setMap(map);
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             function (position) {
