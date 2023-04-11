@@ -5,7 +5,7 @@
         mapTypeId: 'roadmap',
         mapId: '869fd3c6510ec622'
     });
-    var datumparkeringBoundaryCoords = [
+    var baoundaryCoords = [
         { lat: 63.12152322147656, lng: 14.766334845860246 },
         { lat: 63.12961437522173, lng: 14.792462093080598 },
         { lat: 63.13626831169727, lng: 14.775428860086112 },
@@ -24,22 +24,19 @@
         { lat: 63.21775290108519, lng: 14.600332994994677 },
         { lat: 63.205904415903404, lng: 14.580696235034345 },
         { lat: 63.1910645055729, lng: 14.555723782359848 },
-        { lat: 63.18359405562867, lng: 14.573741135545484 },
-        { lat: 63.17968654358582, lng: 14.572225466507843 },
-        { lat: 63.17656015431034, lng: 14.566379314123928 },
         { lat: 63.17799312449886, lng: 14.533828516573006 },
         { lat: 63.16392089330742, lng: 14.534261564869476 },
         { lat: 63.16389705742495, lng: 14.592092129025437 },
         { lat: 63.121792308944016, lng: 14.76607945140348 }
     ];
-    var datumparkeringBoundary = new google.maps.Polyline({
-        path: datumparkeringBoundaryCoords,
+     baoundaryCoords = new google.maps.Polyline({
+        path: baoundaryCoords,
         geodesic: true,
         strokeColor: "#FF0000",
         strokeOpacity: 1.0,
         strokeWeight: 2
     });
-
+    baoundaryCoords.setMap(map);
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             function (position) {
