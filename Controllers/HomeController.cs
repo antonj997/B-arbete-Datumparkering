@@ -13,13 +13,33 @@ namespace Datumparkering.Controllers
             _logger = logger;
         }
 
-            public DateTime GetTodaysDate()
+        public DateTime GetTodaysDate()
+        {
+            return DateTime.Now.Date;
+        }
+        public bool IsTodayDateEven()
+        {
+            DateTime today = GetTodaysDate();
+            int day = today.Day;
+            return day % 2 == 0;
+        }
+        public string GetParkingMessage()
+        {
+            if (IsTodayDateEven())
             {
-                return DateTime.Now.Date;
+                return "Inatt slår det över till ojämnt datum, det innebär att du endast får parkera på gatunummer med jämnt husnummer.";
             }
+            else
+            {
+                return "Inatt slår det över till jämnt datum, det innebär att du endast får parkera på gatunummer med ojämnt husnummer.";
+            }
+        }
+
         public IActionResult Index()
         {
             ViewBag.TodaysDate = GetTodaysDate();
+            bool EvanDay = IsTodayDateEven();
+            ViewBag.ParkingMessage = GetParkingMessage();
             return View();
         }
 
