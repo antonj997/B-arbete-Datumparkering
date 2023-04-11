@@ -7,10 +7,15 @@
         disableDefaultUI: true
     });
 
-    // Define the marker
+    // Define the marker for current location
     var marker = new google.maps.Marker({
         map: map,
-        title: "Closest address"
+        title: "Your address",
+        icon: {
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, // Use an arrow icon
+            scale: 5, // Set the size of the arrow
+            rotation: 0 // Set the initial rotation to 0 degrees
+        }
     });
 
     // Define the geocoder
@@ -24,8 +29,19 @@
             lng: position.coords.longitude
         };
 
+
         marker.setPosition(pos);
         console.log("update");
+
+        // Update marker rotation to indicate heading
+        var heading = position.coords.heading;
+        if (typeof heading !== 'undefined') {
+            marker.setIcon({
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                scale: 5,
+                rotation: heading // Set the rotation to the current heading
+            });
+        }
 
         // Find the closest address to the current location
         geocoder.geocode({ location: pos }, function (results, status) {
@@ -98,7 +114,7 @@ function errorCallback(error) {
 
 }
 var options = {
-    enableHighAccuracy: false,
+    enableHighAccuracy: true,
     timeout: 5000,
     maximumAge: 0
 };
