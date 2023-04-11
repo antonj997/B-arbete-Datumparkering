@@ -71,7 +71,7 @@
         { lat: 63.16389705742495, lng: 14.592092129025437 },
         { lat: 63.121792308944016, lng: 14.76607945140348 }
     ];
-     boundryCoords = new google.maps.Polyline({ 
+    boundryCoords = new google.maps.Polyline({
         path: boundryCoords,
         geodesic: true,
         strokeColor: "#FF0000",
@@ -79,7 +79,7 @@
         strokeWeight: 2
     });
     boundryCoords.setMap(map);
-
+}
 var reqcount = 0;
 
 navigator.geolocation.watchPosition(successCallback, errorCallback, options);
