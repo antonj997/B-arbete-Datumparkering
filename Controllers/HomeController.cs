@@ -34,12 +34,21 @@ namespace Datumparkering.Controllers
                 return "Inatt slår det över till jämnt datum, det innebär att du endast får parkera på gatunummer med ojämnt husnummer.";
             }
         }
+        public string ShowParkingRules()
+        {
+            string text = "Datumparkering gäller nattetid från 1 oktober till 31 maj mellan klockan 00.00 och 07.00. Och det gäller bara inom zonen för datumparkering som innefattar hela centrala Östersund, Lugnvik, Odensala, Torvalla och den tätbebyggda delen av Frösön (se karta).\n\nDatumparkering gäller även på markerade parkeringsrutor.\n\nOm du parkerar på dagtid spelar det ingen roll vilken sida av gatan du står på, så länge det är tillåtet att parkera där.\n\nDatumparkering är ett parkeringsförbud som innebär att du alla dagar under perioden 1 oktober till 31 maj, mellan klockan 00.00-07.00:\n\n- inte får parkera på sida med jämnt gatunummer på natt med jämnt datum.\n- inte får parkera på sida med udda gatunummer på natt med udda datum.";
+
+            return text;
+        }
+        //Skapa event handler för första labeln
+      
 
         public IActionResult Index()
         {
             ViewBag.TodaysDate = GetTodaysDate();
             bool EvanDay = IsTodayDateEven();
             ViewBag.ParkingMessage = GetParkingMessage();
+            
             return View();
         }
 
