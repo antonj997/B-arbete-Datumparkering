@@ -6,9 +6,11 @@
         mapId: '869fd3c6510ec622',
         disableDefaultUI: true
     });
-
+    
+    AddmarkerWithClick(map);
+    
     // Define the marker for current location
-    var marker = new google.maps.Marker({
+    var userPosition = new google.maps.Marker({
         map: map,
         title: "Your address",
         icon: {
@@ -30,13 +32,13 @@
         };
 
 
-        marker.setPosition(pos);
+        userPosition.setPosition(pos);
         console.log("update");
 
         // Update marker rotation to indicate heading
         var heading = position.coords.heading;
         if (typeof heading !== 'undefined') {
-            marker.setIcon({
+            userPosition.setIcon({
                 path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
                 scale: 5,
                 rotation: heading // Set the rotation to the current heading
@@ -47,12 +49,12 @@
         geocoder.geocode({ location: pos }, function (results, status) {
             if (status === "OK") {
                 if (results[0]) {
-                    marker.setTitle(results[0].formatted_address);
+                    userPosition.setTitle(results[0].formatted_address);
                 } else {
-                    marker.setTitle("No results found");
+                    userPosition.setTitle("No results found");
                 }
             } else {
-                marker.setTitle("Geocoder failed due to: " + status);
+                userPosition.setTitle("Geocoder failed due to: " + status);
             }
         });
 
@@ -100,6 +102,52 @@ var reqcount = 0;
 
 navigator.geolocation.watchPosition(successCallback, errorCallback, options);
 
+function AddmarkerWithClick(map) {
+    map.addListener("click", (event) => {
+        // Create a new marker
+        const marker = new google.maps.Marker({
+            position: event.latLng,
+            map: map,
+        });
+        // Lägg till en mousedown-lyssnare på markern
+        marker.addListener("mousedown", (event) => {
+            // Spara tiden när musknappen trycks ned
+            const startTime = new Date().getTime();
+
+            // Lägg till en mouseup-lyssnare på markern
+            marker.addListener("mouseup", (event) => {
+                // Beräkna tiden som musknappen har varit nedtryckt
+                const endTime = new Date().getTime();
+                const duration = endTime - startTime;
+
+                // Om musknappen har varit nedtryckt i minst 2 sekunder, ta bort markern
+                if (duration >= 2000) {
+                    marker.setMap(null);
+                }
+            });
+        });
+        // Find the nearest address to the marker
+        const geocoder = new google.maps.Geocoder();
+        geocoder
+            .geocode({ location: event.latLng })
+            .then((response) => {
+                if (response.results[0]) {
+                    const infowindow = new google.maps.InfoWindow({
+                        content: response.results[0].formatted_address,
+                    });
+
+                    // Add click event listener to marker to display nearest address
+                    marker.addListener("click", () => {
+                        infowindow.open(map, marker);
+                    });
+                } else {
+                    window.alert("No results found");
+                }
+              
+            })
+            .catch((e) => window.alert("Geocoder failed due to: " + e));
+    });
+}
 function successCallback(position) {
     const { accuracy, latitude, longitude, heading, speed } = position.coords;
     // Show a map centered at latitude / longitude.
