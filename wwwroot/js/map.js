@@ -22,6 +22,9 @@ function initMap() {
         }
     });
 
+  // Define the geocoder
+  var geocoder = new google.maps.Geocoder();
+
     // Watch for location changes
     navigator.geolocation.watchPosition(function (position) {
         // Update marker position
