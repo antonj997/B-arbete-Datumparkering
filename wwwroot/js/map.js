@@ -71,62 +71,34 @@ function initMap() {
   );
 
   // Add event listener to search button
-  var searchBtn = document.getElementById("search-btn");
-  searchBtn.addEventListener("click", search);
+  //var searchBtn = document.getElementById("search-btn");
+  //searchBtn.addEventListener("click", search);
 }
 
 function search() {
-  var geocoder = new google.maps.Geocoder();
-  var address = document.getElementById("search-input").value;
+    var geocoder = new google.maps.Geocoder();
+    var address = document.getElementById('search-input').value;
 
-  geocoder.geocode({ address: address }, function (results, status) {
-    if (status === "OK") {
-      var location = results[0].geometry.location;
-      map.setCenter(location);
-      if (marker) {
-        marker.setMap(null); // Remove previous marker from map
-      }
-      marker = new google.maps.Marker({
-        map: map,
-        position: location,
-      });
-    } else {
-      alert("Geocode was not successful for the following reason: " + status);
-    }
-  });
-}
-    var boundryCoords = [
-        { lat: 63.12152322147656, lng: 14.766334845860246 },
-        { lat: 63.12961437522173, lng: 14.792462093080598 },
-        { lat: 63.13626831169727, lng: 14.775428860086112 },
-        { lat: 63.14070342199764, lng: 14.775428860086112 },
-        { lat: 63.14598553686859, lng: 14.770376630261525 },
-        { lat: 63.15719869005157, lng: 14.773407968336814 },
-        { lat: 63.16580119337055, lng: 14.76084956773919 },
-        { lat: 63.165866354440155, lng: 14.74295023768516 },
-        { lat: 63.16873328187736, lng: 14.72331871491186 },
-        { lat: 63.17101358989112, lng: 14.707584626052375 },
-        { lat: 63.2063028918599, lng: 14.683478270236819 },
-        { lat: 63.2288732851519, lng: 14.65446403338345 },
-        { lat: 63.22854818844582, lng: 14.629202881426004 },
-        { lat: 63.22282588750988, lng: 14.62212975925033 },
-        { lat: 63.2219154170181, lng: 14.608560912627608 },
-        { lat: 63.21775290108519, lng: 14.600332994994677 },
-        { lat: 63.205904415903404, lng: 14.580696235034345 },
-        { lat: 63.1910645055729, lng: 14.555723782359848 },
-        { lat: 63.17799312449886, lng: 14.533828516573006 },
-        { lat: 63.16392089330742, lng: 14.534261564869476 },
-        { lat: 63.16389705742495, lng: 14.592092129025437 },
-        { lat: 63.121792308944016, lng: 14.76607945140348 }
-    ];
-    boundryCoords = new google.maps.Polyline({
-        path: boundryCoords,
-        geodesic: true,
-        strokeColor: "#FF0000",
-        strokeOpacity: 1.0,
-        strokeWeight: 2
+    geocoder.geocode({ 'address': address }, function (results, status) {
+        if (status === 'OK') {
+            // Sort the results based on their proximity to the user's location
+            results.sort(function (a, b) {
+                var distanceA = google.maps.geometry.spherical.computeDistanceBetween(a.geometry.location, map.getCenter());
+                var distanceB = google.maps.geometry.spherical.computeDistanceBetween(b.geometry.location, map.getCenter());
+                return distanceA - distanceB;
+            });
+
+            var location = results[0].geometry.location;
+            map.setCenter(location);
+            var marker = new google.maps.Marker({
+                map: map,
+                position: location
+            });
+        } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+        }
     });
-    boundryCoords.setMap(map);
+}
 
 var reqcount = 0;
 
