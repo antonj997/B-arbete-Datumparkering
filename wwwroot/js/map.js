@@ -1,68 +1,100 @@
-﻿function initMap() {
-    var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 12,
-        center: { lat: 63.1766832, lng: 14.636068099999989 },
-        mapTypeId: 'roadmap',
-        mapId: '869fd3c6510ec622',
-        disableDefaultUI: true
-    });
+﻿var map;
+var marker;
 
-    // Define the marker for current location
-    var marker = new google.maps.Marker({
-        map: map,
-        title: "Your address",
-        icon: {
-            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, // Use an arrow icon
-            scale: 5, // Set the size of the arrow
-            rotation: 0 // Set the initial rotation to 0 degrees
-        }
-    });
+function initMap() {
+  // Initialize the map
+  map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 12,
+    center: { lat: 63.1766832, lng: 14.636068099999989 },
+    mapTypeId: "roadmap",
+    mapId: "869fd3c6510ec622",
+    disableDefaultUI: true,
+  });
 
-    // Define the geocoder
-    var geocoder = new google.maps.Geocoder();
+  // Define the marker for current location
+  marker = new google.maps.Marker({
+    map: map,
+    title: "Your address",
+    icon: {
+      path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, // Use an arrow icon
+      scale: 5, // Set the size of the arrow
+      rotation: 0, // Set the initial rotation to 0 degrees
+    },
+  });
 
-    // Watch for location changes
-    navigator.geolocation.watchPosition(function (position) {
-        // Update marker position
-        var pos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-        };
+  // Define the geocoder
+  var geocoder = new google.maps.Geocoder();
 
+  // Watch for location changes
+  navigator.geolocation.watchPosition(
+    function (position) {
+      // Update marker position
+      var pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
 
-        marker.setPosition(pos);
-        console.log("update");
+      marker.setPosition(pos);
+      console.log("update");
 
-        // Update marker rotation to indicate heading
-        var heading = position.coords.heading;
-        if (typeof heading !== 'undefined') {
-            marker.setIcon({
-                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                scale: 5,
-                rotation: heading // Set the rotation to the current heading
-            });
-        }
-
-        // Find the closest address to the current location
-        geocoder.geocode({ location: pos }, function (results, status) {
-            if (status === "OK") {
-                if (results[0]) {
-                    marker.setTitle(results[0].formatted_address);
-                } else {
-                    marker.setTitle("No results found");
-                }
-            } else {
-                marker.setTitle("Geocoder failed due to: " + status);
-            }
+      // Update marker rotation to indicate heading
+      var heading = position.coords.heading;
+      if (typeof heading !== "undefined") {
+        marker.setIcon({
+          path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+          scale: 5,
+          rotation: heading, // Set the rotation to the current heading
         });
+      }
 
-        // Center the map over the marker
-        map.setCenter(pos);
-    }, function () {
-        // If geolocation is not enabled, default to center of map
-        map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
-    }, { enableHighAccuracy: true, maximumAge: 3000 });
+      // Find the closest address to the current location
+      geocoder.geocode({ location: pos }, function (results, status) {
+        if (status === "OK") {
+          if (results[0]) {
+            marker.setTitle(results[0].formatted_address);
+          } else {
+            marker.setTitle("No results found");
+          }
+        } else {
+          marker.setTitle("Geocoder failed due to: " + status);
+        }
+      });
 
+      // Center the map over the marker
+      map.setCenter(pos);
+    },
+    function () {
+      // If geolocation is not enabled, default to center of map
+      map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
+    },
+    { enableHighAccuracy: true, maximumAge: 3000 }
+  );
+
+  // Add event listener to search button
+  var searchBtn = document.getElementById("search-btn");
+  searchBtn.addEventListener("click", search);
+}
+
+function search() {
+  var geocoder = new google.maps.Geocoder();
+  var address = document.getElementById("search-input").value;
+
+  geocoder.geocode({ address: address }, function (results, status) {
+    if (status === "OK") {
+      var location = results[0].geometry.location;
+      map.setCenter(location);
+      if (marker) {
+        marker.setMap(null); // Remove previous marker from map
+      }
+      marker = new google.maps.Marker({
+        map: map,
+        position: location,
+      });
+    } else {
+      alert("Geocode was not successful for the following reason: " + status);
+    }
+  });
+}
     var boundryCoords = [
         { lat: 63.12152322147656, lng: 14.766334845860246 },
         { lat: 63.12961437522173, lng: 14.792462093080598 },
@@ -95,7 +127,7 @@
         strokeWeight: 2
     });
     boundryCoords.setMap(map);
-}
+
 var reqcount = 0;
 
 navigator.geolocation.watchPosition(successCallback, errorCallback, options);
@@ -118,3 +150,5 @@ var options = {
     timeout: 5000,
     maximumAge: 0
 };
+
+
