@@ -1,4 +1,10 @@
 ﻿var map;
+var address = "hej";
+var streetNumber;
+var isOddStreetNumber;
+var date;
+var isOddDate;
+
 function initMap() {
   // Initialize the map
   map = new google.maps.Map(document.getElementById("map"), {
@@ -9,12 +15,9 @@ function initMap() {
     disableDefaultUI: true,
   });
     AddmarkerWithClick(map);
-    
-    
     // Define the marker for current location
     var userPosition = new google.maps.Marker({
         map: map,
-        title: "Your address",
         icon: {
             path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, // Use an arrow icon
             scale: 5, // Set the size of the arrow
@@ -22,8 +25,19 @@ function initMap() {
         }
     });
 
-  // Define the geocoder
-  var geocoder = new google.maps.Geocoder();
+    // Define the info window for current location marker
+    var userPositionInfoWindow = new google.maps.InfoWindow();
+
+    // Add a mouseover listener to the current location marker to display the info window
+    userPosition.addListener("click", (event) => {
+        // Call the geocodeLocationAndSetContent function to get the content for the info window
+        geocodeLocationAndSetContent(event, userPosition, userPositionInfoWindow, map);
+
+        // Open the info window
+        userPositionInfoWindow.open(map, userPosition);
+    });
+    // Define the geocoder
+    var geocoder = new google.maps.Geocoder();
 
     // Watch for location changes
     navigator.geolocation.watchPosition(function (position) {
@@ -47,18 +61,9 @@ function initMap() {
             });
         }
 
-        // Find the closest address to the current location
-        geocoder.geocode({ location: pos }, function (results, status) {
-            if (status === "OK") {
-                if (results[0]) {
-                    userPosition.setTitle(results[0].formatted_address);
-                } else {
-                    userPosition.setTitle("No results found");
-                }
-            } else {
-                userPosition.setTitle("Geocoder failed due to: " + status);
-            }
-
+        // Update marker title to the closest address to the current location
+        geocodeLocationAndSetContent(geocoder, map, userPosition, pos, function (formattedAddress) {
+            userPosition.setTitle(formattedAddress);
         });
 
       // Center the map over the marker
@@ -133,6 +138,39 @@ var reqcount = 0;
 
 navigator.geolocation.watchPosition(successCallback, errorCallback, options);
 
+
+
+// Define a function to geocode a location and set the infowindow content
+function geocodeLocationAndSetContent(event, marker, infowindow, map) {
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location: event.latLng }, function (results, status) {
+        if (status === "OK" && results[0]) {
+            const address = results[0].formatted_address;
+            const streetNumber = address.match(/\d+/); // get the street number
+
+            // check if the street number is odd or even
+            const isOddStreetNumber = streetNumber % 2 !== 0;
+
+            // check if the date is odd or even
+            const date = new Date();
+            const isOddDate = date.getDate() % 2 !== 0;
+
+            // set the content of the infowindow based on the street number and date
+            let content = address;
+            if (isOddStreetNumber && isOddDate) {
+                content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span>";
+            } else {
+                content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span>";
+            }
+
+            // set the content of the infowindow and open it
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
+        }
+    });
+}
+
+// Define the AddmarkerWithClick method
 function AddmarkerWithClick(map) {
     map.addListener("click", (event) => {
         // Create a new marker
@@ -140,53 +178,10 @@ function AddmarkerWithClick(map) {
             position: event.latLng,
             map: map,
         });
-        const geocoder = new google.maps.Geocoder();
         const infowindow = new google.maps.InfoWindow();
 
-        // Reverse geocode the coordinates to get the address
-        geocoder.geocode({ location: event.latLng }, function (results, status) {
-            if (status === "OK" && results[0]) {
-                const address = results[0].formatted_address;
-                const streetNumber = address.match(/\d+/); // get the street number
-
-                // check if the street number is odd or even
-                const isOddStreetNumber = streetNumber % 2 !== 0;
-
-                // check if the date is odd or even
-                const date = new Date();
-                const isOddDate = date.getDate() % 2 !== 0;
-
-                // set the content of the infowindow based on the street number and date
-                let content = address;
-                if (isOddStreetNumber && isOddDate) {
-                    content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span>";
-                } else {
-                    content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span>";
-                }
-
-                // set the content of the infowindow and open it
-                infowindow.setContent(content);
-                infowindow.open(map, marker);
-            }
-        });
-
-        // Lägg till en mousedown-lyssnare på markern
-        marker.addListener("mousedown", (event) => {
-            // Spara tiden när musknappen trycks ned
-            const startTime = new Date().getTime();
-
-            // Lägg till en mouseup-lyssnare på markern
-            marker.addListener("mouseup", (event) => {
-                // Beräkna tiden som musknappen har varit nedtryckt
-                const endTime = new Date().getTime();
-                const duration = endTime - startTime;
-
-                // Om musknappen har varit nedtryckt i minst 2 sekunder, ta bort markern
-                if (duration >= 2000) {
-                    marker.setMap(null);
-                }
-            });
-        });
+        // Call the geocodeLocationAndSetContent function to geocode the location and set the infowindow content
+        geocodeLocationAndSetContent(event, marker, infowindow, map);
     });
 }
 
