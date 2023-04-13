@@ -1,7 +1,4 @@
-
 ﻿var map;
-var marker;
-
 function initMap() {
   // Initialize the map
   map = new google.maps.Map(document.getElementById("map"), {
@@ -24,9 +21,6 @@ function initMap() {
             rotation: 0 // Set the initial rotation to 0 degrees
         }
     });
-
-  // Define the geocoder
-  var geocoder = new google.maps.Geocoder();
 
     // Watch for location changes
     navigator.geolocation.watchPosition(function (position) {
