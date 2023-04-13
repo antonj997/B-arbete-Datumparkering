@@ -6,6 +6,8 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApUpHKgUAzTHszFAJQfKy8R_ZhZqY2DRs&libraries=geometry&callback=initMap"
         async defer></script>
 <link href="~/css/site.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
 
 <div class="date-container">
     <label>Dagens datum är: @ViewBag.TodaysDate.ToString("yyyy-MM-dd")</label>
@@ -16,14 +18,14 @@
 
 <div id="search-box">
     <input type="text" id="search-input" placeholder="Skriv en adress">
-    <button onclick="search()">Sök</button>
+    <button class="searchBtn" onclick="search()">Sök</button>
 </div>
 
 <div id="map" style="height:100vh;">
 
 </div>
 
-<div id="details"></div>
+
 <button id="read-more-btn" onclick="showHide()">Läs mer om datumparkering</button>
 <div id="more" style="display:none">
     <p>Datumparkering gäller nattetid från 1 oktober till 31 maj mellan klockan 00.00 och 07.00. Och det gäller bara inom zonen för datumparkering som innefattar hela centrala Östersund, Lugnvik, Odensala, Torvalla och den tätbebyggda delen av Frösön (se karta).</p>
@@ -35,3 +37,5 @@
         <li>du får inte får parkera på sida med udda gatunummer på natt med udda datum.</li>
     </ul>
 </div>
+
+<div id="details"></div>
