@@ -107,7 +107,6 @@ function initMap() {
     boundryCoords.setMap(map);
 
 }
-
 function search() {
     var geocoder = new google.maps.Geocoder();
     var address = document.getElementById('search-input').value;
