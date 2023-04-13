@@ -1,6 +1,7 @@
-html {
-  font-size: 14px;
+* {
+    font-family: 'Poppins', sans-serif;
 }
+
 
 @media (min-width: 768px) {
   html {
@@ -19,6 +20,7 @@ html {
 
 body {
   margin-bottom: 60px;
+  padding: 0;
 }
 .date-container {
     text-align: center;
@@ -26,11 +28,61 @@ body {
     border-radius: 5px;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
     padding: 10px;
-    margin: 20px auto;
+    margin: 50px 10px 0px 10px;
     max-width: 500px;
-    font-size: 24px;
+    font-size: 13px;
     font-family: Arial, sans-serif;
+    position: absolute;
+    z-index: 3;
+    background-color: #F8F7FF;
 }
 #ParkingRulesLabel{
     visibility: hidden;
+}
+
+.container{
+    padding:0;
+}
+
+#search-box{
+    width:100%;
+    display:flex;
+    flex-direction:row;
+}
+
+#search-input {
+    width: 100%;
+    padding: 10px;
+    background-color: #B8B8FF;
+    border: none;
+    color: #f8f7ff;
+}
+
+.searchBtn {
+    width: 10rem;
+    background-color: #9381FF;
+    border: none;
+    color: #f8f7ff;
+}
+
+#read-more-btn {
+    width: 100%;
+    padding: 20px;
+    border: none;
+    background-color: #9381FF;
+    color: #F8F7FF;
+    margin-top: -2rem;
+    z-index: 3;
+    position: absolute;
+    
+}
+
+#more{
+    padding: 20px;
+    margin-top: 30px;
+    border:2px dashed #9381FF;
+}
+
+#details {
+    margin: 3rem;
 }
