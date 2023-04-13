@@ -40,7 +40,7 @@ namespace Datumparkering.Controllers
 
             return text;
         }
-        //Skapa event handler för första labeln
+        
       
 
         public IActionResult Index()

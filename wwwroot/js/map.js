@@ -11,8 +11,8 @@ function initMap() {
     mapId: "869fd3c6510ec622",
     disableDefaultUI: true,
   });
-
     AddmarkerWithClick(map);
+    
     
     // Define the marker for current location
     var userPosition = new google.maps.Marker({
@@ -144,6 +144,36 @@ function AddmarkerWithClick(map) {
             position: event.latLng,
             map: map,
         });
+        const geocoder = new google.maps.Geocoder();
+        const infowindow = new google.maps.InfoWindow();
+
+        // Reverse geocode the coordinates to get the address
+        geocoder.geocode({ location: event.latLng }, function (results, status) {
+            if (status === "OK" && results[0]) {
+                const address = results[0].formatted_address;
+                const streetNumber = address.match(/\d+/); // get the street number
+
+                // check if the street number is odd or even
+                const isOddStreetNumber = streetNumber % 2 !== 0;
+
+                // check if the date is odd or even
+                const date = new Date();
+                const isOddDate = date.getDate() % 2 !== 0;
+
+                // set the content of the infowindow based on the street number and date
+                let content = address;
+                if (isOddStreetNumber && isOddDate) {
+                    content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span>";
+                } else {
+                    content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span>";
+                }
+
+                // set the content of the infowindow and open it
+                infowindow.setContent(content);
+                infowindow.open(map, marker);
+            }
+        });
+
         // Lägg till en mousedown-lyssnare på markern
         marker.addListener("mousedown", (event) => {
             // Spara tiden när musknappen trycks ned
@@ -161,28 +191,9 @@ function AddmarkerWithClick(map) {
                 }
             });
         });
-        // Find the nearest address to the marker
-        const geocoder = new google.maps.Geocoder();
-        geocoder
-            .geocode({ location: event.latLng })
-            .then((response) => {
-                if (response.results[0]) {
-                    const infowindow = new google.maps.InfoWindow({
-                        content: response.results[0].formatted_address,
-                    });
-
-                    // Add click event listener to marker to display nearest address
-                    marker.addListener("click", () => {
-                        infowindow.open(map, marker);
-                    });
-                } else {
-                    window.alert("No results found");
-                }
-              
-            })
-            .catch((e) => window.alert("Geocoder failed due to: " + e));
     });
 }
+
 function successCallback(position) {
     const { accuracy, latitude, longitude, heading, speed } = position.coords;
     // Show a map centered at latitude / longitude.
