@@ -1,5 +1,5 @@
 ﻿var map;
-var address = "hej";
+var address;
 var streetNumber;
 var isOddStreetNumber;
 var date;
