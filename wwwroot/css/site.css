@@ -74,7 +74,7 @@ body {
     margin-top: -2rem;
     z-index: 3;
     position: absolute;
-    
+    max-width:82.5rem;
 }
 
 #more{
