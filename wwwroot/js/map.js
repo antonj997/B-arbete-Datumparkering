@@ -109,6 +109,8 @@ function initMap() {
     boundryCoords.setMap(map);
 
 }
+var searchMarker;
+
 function search() {
     var geocoder = new google.maps.Geocoder();
     var address = document.getElementById('search-input').value;
@@ -124,7 +126,14 @@ function search() {
 
             var location = results[0].geometry.location;
             map.setCenter(location);
-            var marker = new google.maps.Marker({
+
+            // Remove the previous search marker, if there is one
+            if (searchMarker) {
+                searchMarker.setMap(null);
+            }
+
+            // Create a new search marker at the searched location
+            searchMarker = new google.maps.Marker({
                 map: map,
                 position: location
             });
@@ -133,6 +142,7 @@ function search() {
         }
     });
 }
+
 
 var reqcount = 0;
 
