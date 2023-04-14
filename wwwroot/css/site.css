@@ -82,13 +82,23 @@ body {
     max-width: 82.5rem;
 }
 
-#more{
+#more {
     padding: 20px;
-    margin:0;
-    height:100vh;
-    border:4px dashed #9381FF;
+    margin: 0;
+    height: 100vh;
+    border: 4px dashed #9381FF;
     background-color: #F8F7FF;
-    z-index:3;
+    z-index: 3;
+    animation: slide .5s ease-in;
+}
+
+@keyframes slide{
+    0%{
+        transform: translateY(100rem)
+    }
+    100%{
+        transform: translateY(0)
+    }
 }
 
 #details {
