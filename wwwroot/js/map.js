@@ -4,6 +4,7 @@ var streetNumber;
 var isOddStreetNumber;
 var date;
 var isOddDate;
+var reqcount = 0;
 
 function initMap() {
   // Initialize the map
@@ -114,6 +115,9 @@ function SetBoundry(map) {
     boundryCoords.setMap(map);
 }
 
+var searchMarker;
+
+
 function search() {
     var geocoder = new google.maps.Geocoder();
     var address = document.getElementById('search-input').value;
@@ -129,7 +133,12 @@ function search() {
 
             var location = results[0].geometry.location;
             map.setCenter(location);
-            var marker = new google.maps.Marker({
+
+            // Remove the previous search marker, if there is one
+            removeMarker(searchMarker)
+
+            // Create a new search marker at the searched location
+            searchMarker = new google.maps.Marker({
                 map: map,
                 position: location
             });
@@ -139,11 +148,14 @@ function search() {
     });
 }
 
-var reqcount = 0;
+// Removes marker
+function removeMarker(marker) {
+    if (marker) {
+        marker.setMap(null);
+    }
+}
 
 navigator.geolocation.watchPosition(successCallback, errorCallback, options);
-
-
 
 // Define a function to geocode a location and set the infowindow content
 function geocodeLocationAndSetContent(event, marker, infowindow, map) {
@@ -175,18 +187,21 @@ function geocodeLocationAndSetContent(event, marker, infowindow, map) {
     });
 }
 
+var tapMarker
 // Define the AddmarkerWithClick method
-function AddmarkerWithClick(map) {
+function AddmarkerWithClick(map) { 
     map.addListener("click", (event) => {
+        // Remove previous marker if there is one 
+        removeMarker(tapMarker)
         // Create a new marker
-        const marker = new google.maps.Marker({
+        tapMarker = new google.maps.Marker({
             position: event.latLng,
             map: map,
         });
         const infowindow = new google.maps.InfoWindow();
 
         // Call the geocodeLocationAndSetContent function to geocode the location and set the infowindow content
-        geocodeLocationAndSetContent(event, marker, infowindow, map);
+        geocodeLocationAndSetContent(event, tapMarker, infowindow, map);
     });
 }
 
