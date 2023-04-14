@@ -16,6 +16,7 @@ function initMap() {
     disableDefaultUI: true,
   });
     AddmarkerWithClick(map);
+    SetBoundry(map);
     // Define the marker for current location
     var userPosition = new google.maps.Marker({
         map: map,
@@ -76,6 +77,10 @@ function initMap() {
     },
     { enableHighAccuracy: true, maximumAge: 3000 }
     );
+    
+
+}
+function SetBoundry(map) {
     var boundryCoords = [
         { lat: 63.12152322147656, lng: 14.766334845860246 },
         { lat: 63.12961437522173, lng: 14.792462093080598 },
@@ -108,9 +113,10 @@ function initMap() {
         strokeWeight: 2
     });
     boundryCoords.setMap(map);
-
 }
+
 var searchMarker;
+
 
 function search() {
     var geocoder = new google.maps.Geocoder();
