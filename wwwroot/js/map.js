@@ -77,8 +77,6 @@ function initMap() {
     },
     { enableHighAccuracy: true, maximumAge: 3000 }
     );
-    
-
 }
 function SetBoundry(map) {
     var boundryCoords = [
