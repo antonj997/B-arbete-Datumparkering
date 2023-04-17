@@ -5,6 +5,7 @@ var isOddStreetNumber;
 var date;
 var isOddDate;
 var reqcount = 0;
+var markers = [];
 
 function initMap() {
   // Initialize the map
@@ -15,7 +16,7 @@ function initMap() {
     mapId: "869fd3c6510ec622",
     disableDefaultUI: true,
   });
-    AddmarkerWithClick(map);
+    
     SetBoundry(map);
     // Define the marker for current location
     var userPosition = new google.maps.Marker({
@@ -28,16 +29,22 @@ function initMap() {
     });
 
     // Define the info window for current location marker
-    var userPositionInfoWindow = new google.maps.InfoWindow();
+    var clickInfowindow = new google.maps.InfoWindow();
 
-    // Add a mouseover listener to the current location marker to display the info window
-    userPosition.addListener("click", (event) => {
-        // Call the geocodeLocationAndSetContent function to get the content for the info window
-        geocodeLocationAndSetContent(event, userPosition, userPositionInfoWindow, map);
+    // Click listener to display the info window over userPosition
+    userPosition.addListener("click", () => {
+        // Call the getInfowindow function to get the content for the info window
+        getInfowindow(userPosition, clickInfowindow, map);
 
         // Open the info window
-        userPositionInfoWindow.open(map, userPosition);
+        clickInfowindow.open(map, userPosition);
     });
+
+    map.addListener("click", (event) => {
+        AddMarkerWithClick(map, event);
+
+    });
+
     // Define the geocoder
     var geocoder = new google.maps.Geocoder();
 
@@ -64,7 +71,7 @@ function initMap() {
         }
 
         // Update marker title to the closest address to the current location
-        geocodeLocationAndSetContent(geocoder, map, userPosition, pos, function (formattedAddress) {
+        getInfowindow(geocoder, map, userPosition, pos, function (formattedAddress) {
             userPosition.setTitle(formattedAddress);
         });
 
@@ -139,7 +146,19 @@ function search() {
             searchMarker = new google.maps.Marker({
                 map: map,
                 position: location
+
             });
+            markers.push(searchMarker);
+
+            // Define the info window for current location marker
+            var searchInfoWindow = new google.maps.InfoWindow();
+
+            
+                // Call the getInfowindow function to get the content for the info window
+                getInfowindow(searchMarker, searchInfoWindow, map);
+
+                // Open the info window
+                searchInfoWindow.open(map, searchMarker);
         } else {
             alert('Geocode was not successful for the following reason: ' + status);
         }
@@ -150,15 +169,16 @@ function search() {
 function removeMarker(marker) {
     if (marker) {
         marker.setMap(null);
+       // markers.splice(marker.findIndex)
     }
 }
 
 navigator.geolocation.watchPosition(successCallback, errorCallback, options);
 
 // Define a function to geocode a location and set the infowindow content
-function geocodeLocationAndSetContent(event, marker, infowindow, map) {
+function getInfowindow(marker, infowindow, map) {
     const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ location: event.latLng }, function (results, status) {
+    geocoder.geocode({ location: marker.position }, function (results, status) {
         if (status === "OK" && results[0]) {
             const address = results[0].formatted_address;
             const streetNumber = address.match(/\d+/); // get the street number
@@ -187,8 +207,8 @@ function geocodeLocationAndSetContent(event, marker, infowindow, map) {
 
 var tapMarker
 // Define the AddmarkerWithClick method
-function AddmarkerWithClick(map) { 
-    map.addListener("click", (event) => {
+function AddMarkerWithClick(map, event) { 
+    
         // Remove previous marker if there is one 
         removeMarker(tapMarker)
         // Create a new marker
@@ -198,9 +218,8 @@ function AddmarkerWithClick(map) {
         });
         const infowindow = new google.maps.InfoWindow();
 
-        // Call the geocodeLocationAndSetContent function to geocode the location and set the infowindow content
-        geocodeLocationAndSetContent(event, tapMarker, infowindow, map);
-    });
+        // Call the getInfowindow function to geocode the location and set the infowindow content
+        getInfowindow(tapMarker, infowindow, map);
 }
 
 function successCallback(position) {
