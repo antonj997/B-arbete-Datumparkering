@@ -32,6 +32,8 @@ function initMap() {
         getInfowindow(userPosition, map);
     });
 
+    
+
     map.addListener("click", (event) => {
         AddMarkerWithClick(map, event);
 
