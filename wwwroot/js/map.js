@@ -78,9 +78,8 @@ function initMap() {
         mapId: "869fd3c6510ec622",
         disableDefaultUI: true,
     });
-
     SetBoundry(map);
-    //slowZoom(map);
+    slowZoom(map);
     // Define the marker for current location
     var userPosition = new google.maps.Marker({
         map: map,
@@ -158,28 +157,18 @@ function deletePolygons(polygons) {
 
 
 navigator.geolocation.watchPosition(successCallback, errorCallback, options);
-
 function slowZoom(map) {
-    var targetZoom = 15;
-    var currentZoom = map.getZoom();
-    var delay = 100; // milliseconds
-    var step = 1;
-    var numSteps = Math.abs(targetZoom - currentZoom) / step;
-
-    var zoomInterval = setInterval(function () {
-        if (currentZoom < targetZoom) {
-            currentZoom += step;
-            map.setZoom(currentZoom);
-        } else if (currentZoom > targetZoom) {
-            currentZoom -= step;
-            map.setZoom(currentZoom);
-        }
-        numSteps--;
-
-        if (numSteps <= 0) {
-            clearInterval(zoomInterval);
-        }
-    }, delay);
+    setTimeout(function () {
+        // zooma in på kartan från nivå 12 till 15 i 2 sekunder
+        var zoomInterval = setInterval(function () {
+            var zoom = map.getZoom();
+            if (zoom >= 18) {
+                clearInterval(zoomInterval);
+            } else {
+                map.setZoom(zoom + 1);
+            }
+        }, 60);
+    }, 3000);
 }
 
 function SetBoundry(map) {
