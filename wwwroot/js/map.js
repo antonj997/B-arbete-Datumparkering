@@ -1,10 +1,9 @@
 ﻿var map;
-var address;
-var streetNumber;
-var isOddStreetNumber;
-var date;
-var isOddDate;
+var tapMarker;
+var searchMarker;
 var reqcount = 0;
+var tapMarkers = [];
+var searchMarkers = [];
 
 var topCoords = [
     { lat: 63.18810627977892, lng: 14.550748585343229 },
@@ -71,15 +70,15 @@ var boundryCoords = [
 var polygons = [];
 
 function initMap() {
-  // Initialize the map
-  map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 12,
-    center: { lat: 63.1766832, lng: 14.636068099999989 },
-    mapTypeId: "roadmap",
-    mapId: "869fd3c6510ec622",
-    disableDefaultUI: true,
-  });
-    AddmarkerWithClick(map);
+    // Initialize the map
+    map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 18,
+        center: { lat: 63.1766832, lng: 14.636068099999989 },
+        mapTypeId: "roadmap",
+        mapId: "869fd3c6510ec622",
+        disableDefaultUI: true,
+    });
+
     SetBoundry(map);
     // Define the marker for current location
     var userPosition = new google.maps.Marker({
@@ -87,27 +86,30 @@ function initMap() {
         icon: {
             path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, // Use an arrow icon
             scale: 5, // Set the size of the arrow
-            rotation: 0 // Set the initial rotation to 0 degrees
+            rotation: 0, // Set the initial rotation to 0 degrees
         }
     });
+
 
     google.maps.event.addListener(map, 'zoom_changed', function () {
        deletePolygons(polygons);
     });
    
-    // Define the info window for current location marker
-    var userPositionInfoWindow = new google.maps.InfoWindow();
+    
 
-    // Add a mouseover listener to the current location marker to display the info window
-    userPosition.addListener("click", (event) => {
-        // Call the geocodeLocationAndSetContent function to get the content for the info window
-        geocodeLocationAndSetContent(event, userPosition, userPositionInfoWindow, map);
-
-        // Open the info window
-        userPositionInfoWindow.open(map, userPosition);
+    // Click listener to display the info window over userPosition
+    userPosition.addListener("click", () => {
+        // Open infowindow for user marker
+        getInfowindow(userPosition, map);
     });
-    // Define the geocoder
-    var geocoder = new google.maps.Geocoder();
+
+
+    
+
+    map.addListener("click", (event) => {
+        AddMarkerWithClick(map, event);
+
+    });
 
     // Watch for location changes
     navigator.geolocation.watchPosition(function (position) {
@@ -116,7 +118,6 @@ function initMap() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
-
 
         userPosition.setPosition(pos);
         
@@ -134,12 +135,7 @@ function initMap() {
             });
         }
 
-        // Update marker title to the closest address to the current location
-        geocodeLocationAndSetContent(geocoder, map, userPosition, pos, function (formattedAddress) {
-            userPosition.setTitle(formattedAddress);
-        });
 
-       
       // Center the map over the marker
       map.setCenter(pos);
     },
@@ -150,6 +146,7 @@ function initMap() {
     { enableHighAccuracy: true, maximumAge: 3000 }
     );
 }
+
 function deletePolygons(polygons) {
 
         for (var i = 0; i < polygons.length; i++) {
@@ -157,6 +154,10 @@ function deletePolygons(polygons) {
         }
     
 }
+
+
+navigator.geolocation.watchPosition(successCallback, errorCallback, options);
+
 
 function SetBoundry(map) {
    
@@ -201,16 +202,16 @@ function SetBoundry(map) {
     polygons.push(topBoundry, middleBoundry, bottomBoundry);
 }
 
-var searchMarker;
-
-
+// Gets adress form input, adds marker and infowindow and centers map over marker
 function search() {
     var geocoder = new google.maps.Geocoder();
-    var address = document.getElementById('search-input').value;
+    var address = document.getElementById('search-input').value + ", Östersund";
+    if (address.length !== "Postgränd 10, 831 30 Östersund, Sverige, Östersund") {
 
+    
     geocoder.geocode({ 'address': address }, function (results, status) {
         if (status === 'OK') {
-            // Sort the results based on their proximity to the user's location
+            // Sorts the results based on their proximity to the user's location
             results.sort(function (a, b) {
                 var distanceA = google.maps.geometry.spherical.computeDistanceBetween(a.geometry.location, map.getCenter());
                 var distanceB = google.maps.geometry.spherical.computeDistanceBetween(b.geometry.location, map.getCenter());
@@ -220,48 +221,67 @@ function search() {
             var location = results[0].geometry.location;
             map.setCenter(location);
 
-            // Remove the previous search marker, if there is one
+            // Removes the previous search marker, if there is one
             removeMarker(searchMarker)
 
-            // Create a new search marker at the searched location
+            // Creates a new search marker at the searched location
             searchMarker = new google.maps.Marker({
                 map: map,
                 position: location
+
+            });
+            searchMarkers.push(searchMarker);
+
+            // Open infowindow for search marker
+            getInfowindow(searchMarker, map);
+
+            // Adding a listener to new marker that open infowindow on click
+            searchMarkers.push(searchMarker)
+            searchMarkers[0].addListener("click", () => {
+                getInfowindow(searchMarker, map)
             });
         } else {
-            alert('Geocode was not successful for the following reason: ' + status);
+            alert('Search was not successful for the following reason: ' + status);
         }
     });
+    }
+    else {
+        alert("Search not found")
+    }
 }
 
 // Removes marker
 function removeMarker(marker) {
     if (marker) {
         marker.setMap(null);
+        tapMarkers.pop();
+        searchMarkers.pop();
     }
 }
 
-navigator.geolocation.watchPosition(successCallback, errorCallback, options);
-
-// Define a function to geocode a location and set the infowindow content
-function geocodeLocationAndSetContent(event, marker, infowindow, map) {
+// Gets location of marker and opens a infowindow with relevant content
+function getInfowindow(marker, map) {
     const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ location: event.latLng }, function (results, status) {
+    var infowindow = new google.maps.InfoWindow();
+    geocoder.geocode({ location: marker.position }, function (results, status) {
         if (status === "OK" && results[0]) {
             const address = results[0].formatted_address;
             const streetNumber = address.match(/\d+/); // get the street number
 
             // check if the street number is odd or even
             const isOddStreetNumber = streetNumber % 2 !== 0;
+            const isEvenStreetNumber = streetNumber % 2 == 0;
 
             // check if the date is odd or even
             const date = new Date();
             const isOddDate = date.getDate() % 2 !== 0;
+            const isEvenDate = date.getDate() % 2 == 0;
 
             // set the content of the infowindow based on the street number and date
             let content = address;
-            if (isOddStreetNumber && isOddDate) {
-                content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span><br><span>"+event.latLng+"</span>";
+
+            if (isOddStreetNumber && isOddDate || isEvenStreetNumber && isEvenDate) {
+                content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span>";
             } else {
                 content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span><br><span>"+event.latLng+"</span>";
             }
@@ -273,10 +293,10 @@ function geocodeLocationAndSetContent(event, marker, infowindow, map) {
     });
 }
 
-var tapMarker
-// Define the AddmarkerWithClick method
-function AddmarkerWithClick(map) { 
-    map.addListener("click", (event) => {
+
+// Addig marker on location of clicklistener
+function AddMarkerWithClick(map, event) { 
+    
         // Remove previous marker if there is one 
         removeMarker(tapMarker)
         // Create a new marker
@@ -284,10 +304,15 @@ function AddmarkerWithClick(map) {
             position: event.latLng,
             map: map,
         });
-        const infowindow = new google.maps.InfoWindow();
+     
 
-        // Call the geocodeLocationAndSetContent function to geocode the location and set the infowindow content
-        geocodeLocationAndSetContent(event, tapMarker, infowindow, map);
+    // Open infowindow for tap marker
+    getInfowindow(tapMarker, map);
+
+    // Adding a listener to new marker
+    tapMarkers.push(tapMarker)
+    tapMarkers[0].addListener("click", () => {
+        getInfowindow(tapMarker, map)
     });
 }
 
@@ -301,6 +326,7 @@ function successCallback(position) {
     details.innerHTML += "Speed: " + speed + "<br>";
     details.innerHTML += "reqcount: " + reqcount;
 }
+
 function errorCallback(error) {
 
 }

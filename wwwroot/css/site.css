@@ -82,13 +82,24 @@ body {
     max-width: 82.5rem;
 }
 
-#more{
+#more {
     padding: 20px;
-    margin:0;
-    height:100vh;
-    border:4px dashed #9381FF;
+    padding-bottom: 40px;
+    margin: 0;
+    height:fit-content;
+    border: 4px dashed #9381FF;
     background-color: #F8F7FF;
-    z-index:3;
+    z-index: 3;
+    animation: slide .4s ease-in;
+}
+
+@keyframes slide{
+    0%{
+        transform: translateY(50rem)
+    }
+    100%{
+        transform: translateY(0)
+    }
 }
 
 #details {
@@ -102,7 +113,11 @@ body {
     position: absolute;
     top: 55px;
     left: 0;
-    bottom: 40px;
+    bottom: 0;
     right: 0;
     z-index:-1;
+}
+
+.pb-3 {
+    padding-bottom: 0 !important;
 }
