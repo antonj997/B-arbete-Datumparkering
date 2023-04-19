@@ -6,6 +6,68 @@ var date;
 var isOddDate;
 var reqcount = 0;
 
+var topCoords = [
+    { lat: 63.18810627977892, lng: 14.550748585343229 },
+    { lat: 63.18810627977892, lng: 14.69591697758541 },
+    { lat: 63.2063028918599, lng: 14.683478270236819 },
+    { lat: 63.2288732851519, lng: 14.65446403338345 },
+    { lat: 63.22854818844582, lng: 14.629202881426004 },
+    { lat: 63.22282588750988, lng: 14.62212975925033 },
+    { lat: 63.2219154170181, lng: 14.608560912627608 },
+    { lat: 63.21775290108519, lng: 14.600332994994677 },
+    { lat: 63.17799312449886, lng: 14.533828516573006 },
+   
+];
+var middleCoords = [
+    { lat: 63.18810627977892, lng: 14.550748585343229 },
+    { lat: 63.17799312449886, lng: 14.533828516573006 },
+    { lat: 63.16392089330742, lng: 14.534261564869476 },
+    { lat: 63.16389705742495, lng: 14.592092129025437 },
+    { lat: 63.165866354440155, lng: 14.74295023768516 },
+    { lat: 63.17101358989112, lng: 14.707584626052375 },
+    { lat: 63.18810627977892, lng: 14.69591697758541 },
+    { lat: 63.18810627977892, lng: 14.550748585343229 },
+];
+var bottomCoords = [
+    { lat: 63.16389705742495, lng: 14.592092129025437 },
+    { lat: 63.12152322147656, lng: 14.766334845860246 },
+    { lat: 63.12961437522173, lng: 14.792462093080598 },
+    { lat: 63.13626831169727, lng: 14.775428860086112 },
+    { lat: 63.14070342199764, lng: 14.775428860086112 },
+    { lat: 63.14598553686859, lng: 14.770376630261525 },
+    { lat: 63.15719869005157, lng: 14.773407968336814 },
+    { lat: 63.16580119337055, lng: 14.76084956773919 },
+    { lat: 63.165866354440155, lng: 14.74295023768516 },
+    { lat: 63.165866354440155, lng: 14.74295023768516 },
+    { lat: 63.16389705742495, lng: 14.592092129025437 },
+    
+];
+
+var boundryCoords = [
+    { lat: 63.12152322147656, lng: 14.766334845860246 },
+    { lat: 63.12961437522173, lng: 14.792462093080598 },
+    { lat: 63.13626831169727, lng: 14.775428860086112 },
+    { lat: 63.14070342199764, lng: 14.775428860086112 },
+    { lat: 63.14598553686859, lng: 14.770376630261525 },
+    { lat: 63.15719869005157, lng: 14.773407968336814 },
+    { lat: 63.16580119337055, lng: 14.76084956773919 },
+    { lat: 63.165866354440155, lng: 14.74295023768516 },
+    { lat: 63.16873328187736, lng: 14.72331871491186 },
+    { lat: 63.17101358989112, lng: 14.707584626052375 },
+    { lat: 63.2063028918599, lng: 14.683478270236819 },
+    { lat: 63.2288732851519, lng: 14.65446403338345 },
+    { lat: 63.22854818844582, lng: 14.629202881426004 },
+    { lat: 63.22282588750988, lng: 14.62212975925033 },
+    { lat: 63.2219154170181, lng: 14.608560912627608 },
+    { lat: 63.21775290108519, lng: 14.600332994994677 },
+    { lat: 63.205904415903404, lng: 14.580696235034345 },
+    { lat: 63.1910645055729, lng: 14.555723782359848 },
+    { lat: 63.17799312449886, lng: 14.533828516573006 },
+    { lat: 63.16392089330742, lng: 14.534261564869476 },
+    { lat: 63.16389705742495, lng: 14.592092129025437 },
+    { lat: 63.12152322147656, lng: 14.766334845860246 },
+];
+
 function initMap() {
   // Initialize the map
   map = new google.maps.Map(document.getElementById("map"), {
@@ -52,7 +114,7 @@ function initMap() {
 
 
         userPosition.setPosition(pos);
-        isUserOnRoad(pos);
+        
         
 
         console.log("update");
@@ -84,30 +146,7 @@ function initMap() {
     );
 }
 function SetBoundry(map) {
-    var boundryCoords = [
-        { lat: 63.12152322147656, lng: 14.766334845860246 },
-        { lat: 63.12961437522173, lng: 14.792462093080598 },
-        { lat: 63.13626831169727, lng: 14.775428860086112 },
-        { lat: 63.14070342199764, lng: 14.775428860086112 },
-        { lat: 63.14598553686859, lng: 14.770376630261525 },
-        { lat: 63.15719869005157, lng: 14.773407968336814 },
-        { lat: 63.16580119337055, lng: 14.76084956773919 },
-        { lat: 63.165866354440155, lng: 14.74295023768516 },
-        { lat: 63.16873328187736, lng: 14.72331871491186 },
-        { lat: 63.17101358989112, lng: 14.707584626052375 },
-        { lat: 63.2063028918599, lng: 14.683478270236819 },
-        { lat: 63.2288732851519, lng: 14.65446403338345 },
-        { lat: 63.22854818844582, lng: 14.629202881426004 },
-        { lat: 63.22282588750988, lng: 14.62212975925033 },
-        { lat: 63.2219154170181, lng: 14.608560912627608 },
-        { lat: 63.21775290108519, lng: 14.600332994994677 },
-        { lat: 63.205904415903404, lng: 14.580696235034345 },
-        { lat: 63.1910645055729, lng: 14.555723782359848 },
-        { lat: 63.17799312449886, lng: 14.533828516573006 },
-        { lat: 63.16392089330742, lng: 14.534261564869476 },
-        { lat: 63.16389705742495, lng: 14.592092129025437 },
-        { lat: 63.121792308944016, lng: 14.76607945140348 }
-    ];
+   
     boundryCoords = new google.maps.Polyline({
         path: boundryCoords,
         geodesic: true,
@@ -116,6 +155,35 @@ function SetBoundry(map) {
         strokeWeight: 2
     });
     boundryCoords.setMap(map);
+
+    // Skapa Polygon för varje del med sin egen färg
+    var topBoundry = new google.maps.Polygon({
+        paths: topCoords,
+        strokeColor: "#00319C",
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: "#00319C",
+        fillOpacity: 0.35
+    });
+    topBoundry.setMap(map);
+    var middleBoundry = new google.maps.Polygon({
+        paths: middleCoords,
+        strokeColor: "#FFFFFF",
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: "#FFFFFF",
+        fillOpacity: 0.35
+    });
+    middleBoundry.setMap(map);
+    var bottomBoundry = new google.maps.Polygon({
+        paths: bottomCoords,
+        strokeColor: "#319C63",
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: "#319C63",
+        fillOpacity: 0.35
+    });
+    bottomBoundry.setMap(map);
 }
 
 var searchMarker;
@@ -178,9 +246,9 @@ function geocodeLocationAndSetContent(event, marker, infowindow, map) {
             // set the content of the infowindow based on the street number and date
             let content = address;
             if (isOddStreetNumber && isOddDate) {
-                content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span>";
+                content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span><br><span>"+event.latLng+"</span>";
             } else {
-                content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span>";
+                content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span><br><span>"+event.latLng+"</span>";
             }
 
             // set the content of the infowindow and open it
