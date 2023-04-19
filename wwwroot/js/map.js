@@ -68,6 +68,8 @@ var boundryCoords = [
     { lat: 63.12152322147656, lng: 14.766334845860246 },
 ];
 
+var polygons = [];
+
 function initMap() {
   // Initialize the map
   map = new google.maps.Map(document.getElementById("map"), {
@@ -89,6 +91,9 @@ function initMap() {
         }
     });
 
+    google.maps.event.addListener(map, 'zoom_changed', function () {
+       deletePolygons(polygons);
+    });
    
     // Define the info window for current location marker
     var userPositionInfoWindow = new google.maps.InfoWindow();
@@ -145,6 +150,14 @@ function initMap() {
     { enableHighAccuracy: true, maximumAge: 3000 }
     );
 }
+function deletePolygons(polygons) {
+
+        for (var i = 0; i < polygons.length; i++) {
+            polygons[i].setMap(null);
+        }
+    
+}
+
 function SetBoundry(map) {
    
     boundryCoords = new google.maps.Polyline({
@@ -184,6 +197,8 @@ function SetBoundry(map) {
         fillOpacity: 0.35
     });
     bottomBoundry.setMap(map);
+
+    polygons.push(topBoundry, middleBoundry, bottomBoundry);
 }
 
 var searchMarker;
