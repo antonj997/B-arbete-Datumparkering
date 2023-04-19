@@ -72,7 +72,7 @@ var polygons = [];
 function initMap() {
     // Initialize the map
     map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 18,
+        zoom: 12,
         center: { lat: 63.1766832, lng: 14.636068099999989 },
         mapTypeId: "roadmap",
         mapId: "869fd3c6510ec622",
@@ -80,6 +80,7 @@ function initMap() {
     });
 
     SetBoundry(map);
+    slowZoom(map);
     // Define the marker for current location
     var userPosition = new google.maps.Marker({
         map: map,
@@ -158,6 +159,28 @@ function deletePolygons(polygons) {
 
 navigator.geolocation.watchPosition(successCallback, errorCallback, options);
 
+function slowZoom(map) {
+    var targetZoom = 15;
+    var currentZoom = map.getZoom();
+    var delay = 100; // milliseconds
+    var step = 1;
+    var numSteps = Math.abs(targetZoom - currentZoom) / step;
+
+    var zoomInterval = setInterval(function () {
+        if (currentZoom < targetZoom) {
+            currentZoom += step;
+            map.setZoom(currentZoom);
+        } else if (currentZoom > targetZoom) {
+            currentZoom -= step;
+            map.setZoom(currentZoom);
+        }
+        numSteps--;
+
+        if (numSteps <= 0) {
+            clearInterval(zoomInterval);
+        }
+    }, delay);
+}
 
 function SetBoundry(map) {
    
@@ -283,7 +306,7 @@ function getInfowindow(marker, map) {
             if (isOddStreetNumber && isOddDate || isEvenStreetNumber && isEvenDate) {
                 content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span>";
             } else {
-                content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span><br><span>"+event.latLng+"</span>";
+                content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span>";
             }
 
             // set the content of the infowindow and open it
