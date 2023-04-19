@@ -80,7 +80,7 @@ function initMap() {
     });
 
     SetBoundry(map);
-    slowZoom(map);
+    //slowZoom(map);
     // Define the marker for current location
     var userPosition = new google.maps.Marker({
         map: map,
