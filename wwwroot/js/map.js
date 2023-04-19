@@ -309,38 +309,6 @@ var options = {
     timeout: 5000,
     maximumAge: 0
 };
-
-function isUserOnRoad(position) {
-  
-    var nearestRoads = getNearestRoads(position);
-    if (nearestRoads && nearestRoads.length > 0) {
-        var request = {
-            origin: nearestRoads[0].location,
-            destination: nearestRoads[0].location,
-            travelMode: google.maps.TravelMode.DRIVING
-        };
-
-        var directionsService = new google.maps.DirectionsService();
-        directionsService.route(request, function (response, status) {
-            if (status === google.maps.DirectionsStatus.OK) {
-                var route = response.routes[0];
-                var legs = route.legs;
-                var distance = google.maps.geometry.spherical.computeDistanceBetween(latLng, legs[0].start_location);
-                if (distance < 10) {
-                    console.log("Användaren är på en väg");
-                } else {
-                    console.log("Användaren är inte på en väg");
-                }
-
-            } else {
-                console.log("Det uppstod ett fel när vi försökte kolla om användaren var på en väg.");
-            }
-        });
-    } else {
-        console.log("Could not find nearest road.");
-    }
-    
-}
 function getNearestRoads(position) {
     var test = "60.170880%2C24.942795%7C60.170879%2C24.942796%7C60.170877%2C24.942796";
     var url = "https://roads.googleapis.com/v1/nearestRoads?points="+position.lat+","+position.lng+"&key=AIzaSyBkBbF39y-c4swhua_X7KozY0W8nSMnqKA";
