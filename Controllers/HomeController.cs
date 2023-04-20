@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Datumparkering.Infrastrukture;
-
+using System;
 namespace Datumparkering.Controllers
 {
     public class HomeController : Controller
@@ -52,8 +52,10 @@ namespace Datumparkering.Controllers
 
         public IActionResult Index()
         {
-            MyApiConnection _apiConnection = new MyApiConnection();
-            ViewBag.apiConnectionString = _apiConnection.GetConnectionString();
+            //MyApiConnection _apiConnection = new MyApiConnection();
+            //ViewBag.apiConnectionString = _apiConnection.GetConnectionString();
+
+            ViewBag.apiConnectionString = System.Environment.GetEnvironmentVariable("GoogleMapsApiKey");
             ViewBag.TodaysDate = GetTodaysDate();
             bool EvanDay = IsTodayDateEven();
             ViewBag.ParkingMessage = GetParkingMessage();
