@@ -67,7 +67,129 @@ var boundryCoords = [
     { lat: 63.12152322147656, lng: 14.766334845860246 },
 ];
 
+
+var roadSegments = [
+    {
+        origin: "63.18578746236578, 14.61978842179206",
+        destination: "63.192497868279915, 14.611129731804375"
+    },
+    {
+        origin: "63.18578746236578, 14.61978842179206",
+        destination: "63.181766798794726, 14.613239383678609"
+    },
+    {
+        origin: "63.1827267164234, 14.611412486493757",
+        destination: "63.18446352812645, 14.614090945098987"
+    },
+    {
+        origin: "63.184508347686844, 14.6141652261971",
+        destination: "63.185051103719026, 14.615531287443622"
+    },
+    {
+        origin: "63.18509756169758, 14.61562651586289",
+        destination: "63.185653645424054, 14.616984111947762"
+    },
+    {
+        origin: "63.18570464910098, 14.617107138874887",
+        destination: "63.18632571745608, 14.618618402971313"
+    },
+    {
+        origin: "63.18331485808698, 14.61662582018774",
+        destination: "63.187311952658305, 14.611545800222054"
+    },
+    {
+        origin: "63.18255070698672, 14.619077642813147",
+        destination: "63.186421986962536, 14.610204093553966"
+    },
+    {
+        origin: "63.18489070002478, 14.610436559653657",
+        destination: "63.18507816082744, 14.612802905930463"
+    },
+    {
+        origin: "63.18513262919438, 14.61292537352389",
+        destination: "63.185678672301194, 14.614263152327824"
+    },
+    {
+        origin: "63.18573086338561, 14.614384242247555",
+        destination: "63.18694874308152, 14.617323682312309"
+    },
+    {
+        origin: "63.18636201528712, 14.613122946617615",
+        destination: "63.187571012578864, 14.61605381786779"
+    },
+    {
+        origin: "63.18575712493614, 14.611667566737125",
+        destination: "63.18630663354022, 14.613000076514883"
+    },
+    {
+        origin: "63.18522555593405, 14.61036965016043",
+        destination: "63.185701801491525, 14.611540259490141"
+    },
+    {
+        origin: "63.18701845887824, 14.6100877034644",
+        destination: "63.18839068188213, 14.614980958629902"
+    },
+    {
+        origin: "63.179679447569704, 14.60711223156593",
+        destination: "63.18992622966625, 14.609265816847037"
+    },
+    {
+        origin: "63.181802406459354, 14.618237666343846",
+        destination: "63.18370533478354, 14.610632795217136"
+    }];
+
+
+
 var polygons = [];
+//---------------------------------------------------------------
+
+function addLineToRoad(origin, destination, map, offset) {
+    var directionsService = new google.maps.DirectionsService();
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(map);
+
+    var request = {
+        origin: origin,
+        destination: destination,
+        travelMode: "DRIVING"
+    };
+
+
+
+    directionsService.route(request, function (result, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            var polyline1 = new google.maps.Polyline({
+                path: [],
+                strokeColor: '#eb4034',
+                strokeWeight: 4
+            });
+            var polyline2 = new google.maps.Polyline({
+                path: [],
+                strokeColor: '#349435',
+                strokeWeight: 4
+            });
+
+            var legs = result.routes[0].legs;
+            for (var i = 0; i < legs.length; i++) {
+                var steps = legs[i].steps;
+                for (var j = 0; j < steps.length; j++) {
+                    var nextSegment = steps[j].path;
+                    for (var k = 0; k < nextSegment.length; k++) {
+                        var point1 = google.maps.geometry.spherical.computeOffset(nextSegment[k], offset, 90);
+                        var point2 = google.maps.geometry.spherical.computeOffset(nextSegment[k], offset, 270);
+
+                        polyline1.getPath().push(point1);
+                        polyline2.getPath().push(point2);
+                    }
+                }
+            }
+            polyline1.setMap(map);
+            polyline2.setMap(map);
+        }
+    });
+}
+
+//-----------------------------------------------------------------------
 
 function initMap() {
     // Initialize the map
@@ -92,19 +214,22 @@ function initMap() {
     });
 
 
+
     google.maps.event.addListener(map, 'zoom_changed', function () {
        deletePolygons(polygons);
     });
    
-    
+    for (var i = 0; i < roadSegments.length; i++) {
+        var segment = roadSegments[i];
+        addLineToRoad(segment.origin, segment.destination, map, 2);
+    }
+   
 
     // Click listener to display the info window over userPosition
     userPosition.addListener("click", () => {
         // Open infowindow for user marker
         getInfowindow(userPosition, map);
     });
-
-
     
 
     map.addListener("click", (event) => {
@@ -138,7 +263,7 @@ function initMap() {
 
 
       // Center the map over the marker
-      map.setCenter(pos);
+      //map.setCenter(pos);
     },
     function () {
       // If geolocation is not enabled, default to center of map
@@ -302,11 +427,10 @@ function getInfowindow(marker, map) {
 
             // set the content of the infowindow based on the street number and date
             let content = address;
-
             if (isOddStreetNumber && isOddDate || isEvenStreetNumber && isEvenDate) {
-                content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span>";
+                content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span><br><span>" + marker.position + "</span>";
             } else {
-                content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span>";
+                content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span><br><span>" + marker.position + "</span>";
             }
 
             // set the content of the infowindow and open it
@@ -358,21 +482,3 @@ var options = {
     timeout: 5000,
     maximumAge: 0
 };
-function getNearestRoads(position) {
-    var test = "60.170880%2C24.942795%7C60.170879%2C24.942796%7C60.170877%2C24.942796";
-    var url = "https://roads.googleapis.com/v1/nearestRoads?points="+position.lat+","+position.lng+"&key=AIzaSyBkBbF39y-c4swhua_X7KozY0W8nSMnqKA";
-
-    fetch(url)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            console.log(data);
-            return data;
-            
-        })
-        .catch(function (error) {
-            console.log(error);
-    });
-    
-}
