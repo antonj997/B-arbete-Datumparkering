@@ -1,4 +1,5 @@
-﻿var map;
+﻿
+var map;
 var tapMarker;
 var searchMarker;
 var reqcount = 0;

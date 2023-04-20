@@ -1,12 +1,19 @@
 ﻿using Datumparkering.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.UserSecrets;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting;
+using Datumparkering.Infrastrukture;
 
 namespace Datumparkering.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private string? _connectionString;
+
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -45,6 +52,8 @@ namespace Datumparkering.Controllers
 
         public IActionResult Index()
         {
+            MyApiConnection _apiConnection = new MyApiConnection();
+            ViewBag.apiConnectionString = _apiConnection.GetConnectionString();
             ViewBag.TodaysDate = GetTodaysDate();
             bool EvanDay = IsTodayDateEven();
             ViewBag.ParkingMessage = GetParkingMessage();
