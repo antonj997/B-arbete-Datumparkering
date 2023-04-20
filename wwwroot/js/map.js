@@ -219,10 +219,10 @@ function initMap() {
        deletePolygons(polygons);
     });
    
-    for (var i = 0; i < roadSegments.length; i++) {
-        var segment = roadSegments[i];
-        addLineToRoad(segment.origin, segment.destination, map, 2);
-    }
+    //for (var i = 0; i < roadSegments.length; i++) {
+    //    var segment = roadSegments[i];
+    //    addLineToRoad(segment.origin, segment.destination, map, 2);
+    //}
    
 
     // Click listener to display the info window over userPosition
