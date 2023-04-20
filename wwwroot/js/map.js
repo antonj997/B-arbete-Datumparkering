@@ -263,7 +263,7 @@ function initMap() {
 
 
       // Center the map over the marker
-      //map.setCenter(pos);
+      map.setCenter(pos);
     },
     function () {
       // If geolocation is not enabled, default to center of map
