@@ -471,5 +471,4 @@ function errorCallback(error) {
 var options = {
     enableHighAccuracy: true,
     timeout: 5000,
-    
 };
