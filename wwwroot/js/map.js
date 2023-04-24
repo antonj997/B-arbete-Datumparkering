@@ -265,7 +265,7 @@ function initMap() {
       // If geolocation is not enabled, default to center of map
       map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
     },
-    { enableHighAccuracy: true, maximumAge: 3000 }
+    { enableHighAccuracy: true}
     );
 }
 
@@ -471,5 +471,5 @@ function errorCallback(error) {
 var options = {
     enableHighAccuracy: true,
     timeout: 5000,
-    maximumAge: 0
+    
 };
