@@ -203,6 +203,8 @@ function initMap() {
     });
     SetBoundry(map);
     slowZoom(map);
+    addZoomChangeListener(map);
+
     // Define the marker for current location
     var userPosition = new google.maps.Marker({
         map: map,
@@ -211,12 +213,6 @@ function initMap() {
             scale: 5, // Set the size of the arrow
             rotation: 0, // Set the initial rotation to 0 degrees
         }
-    });
-
-
-
-    google.maps.event.addListener(map, 'zoom_changed', function () {
-       deletePolygons(polygons);
     });
    
     for (var i = 0; i < roadSegments.length; i++) {
@@ -269,7 +265,7 @@ function initMap() {
       // If geolocation is not enabled, default to center of map
       map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
     },
-    { enableHighAccuracy: true, maximumAge: 3000 }
+    { enableHighAccuracy: true}
     );
 }
 
@@ -281,6 +277,11 @@ function deletePolygons(polygons) {
     
 }
 
+function addZoomChangeListener(map) {
+    google.maps.event.addListener(map, 'zoom_changed', function () {
+        deletePolygons(polygons);
+    });
+}
 
 navigator.geolocation.watchPosition(successCallback, errorCallback, options);
 function slowZoom(map) {
@@ -470,5 +471,5 @@ function errorCallback(error) {
 var options = {
     enableHighAccuracy: true,
     timeout: 5000,
-    maximumAge: 0
+    
 };
