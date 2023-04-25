@@ -189,6 +189,7 @@ function addLineToRoad(userPosition, map) {
 
 var service;
 
+
 function initMap() {
     // Initialize the map
     map = new google.maps.Map(document.getElementById("map"), {
@@ -215,13 +216,13 @@ function initMap() {
     //drawParkingPolylines(map, userPosition)
 
     google.maps.event.addListener(map, 'zoom_changed', function () {
-        deletePolygons(polygons);
+       deletePolygons(polygons);
     });
-    /*
-     for (var i = 0; i < roadSegments.length; i++) {
-         var segment = roadSegments[i];
-         
-     }*/
+   /*
+    for (var i = 0; i < roadSegments.length; i++) {
+        var segment = roadSegments[i];
+        
+    }*/
     addLineToRoad(userPosition, map);
 
     // Click listener to display the info window over userPosition
@@ -229,18 +230,11 @@ function initMap() {
         // Open infowindow for user marker
         getInfowindow(userPosition, map);
     });
-
+    
 
     map.addListener("click", (event) => {
         AddMarkerWithClick(map, event);
 
-    });
-
-    var deviceOrientation = 0;
-
-    // Listen for changes in device orientation
-    window.addEventListener('deviceorientation', function (event) {
-        deviceOrientation = event.alpha;
     });
 
     // Watch for location changes
@@ -256,17 +250,20 @@ function initMap() {
         };
 
         userPosition.setPosition(pos);
-
-
+        
+        
 
         console.log("update");
 
         // Update marker rotation to indicate heading
-        userPosition.setIcon({
-            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-            scale: 5,
-            rotation: deviceOrientation // Set the rotation to the device orientation
-        });
+        var heading = position.coords.heading;
+        if (typeof heading !== 'undefined') {
+            userPosition.setIcon({
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                scale: 5,
+                rotation: heading // Set the rotation to the current heading
+            });
+        }
 
         service.nearbySearch({
             location: testPos,
@@ -275,17 +272,16 @@ function initMap() {
         }, processResults);
 
 
-        // Center the map over the marker
-        map.setCenter(pos);
+      // Center the map over the marker
+      map.setCenter(pos);
     },
-        function () {
-            // If geolocation is not enabled, default to center of map
-            map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
-        },
-        { enableHighAccuracy: true, maximumAge: 3000 }
+    function () {
+      // If geolocation is not enabled, default to center of map
+      map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
+    },
+    { enableHighAccuracy: true, maximumAge: 3000 }
     );
 }
-
 /*
 function drawParkingPolylines(map, userLocation) {
     apiKey = "AIzaSyBkBbF39y-c4swhua_X7KozY0W8nSMnqKA";
