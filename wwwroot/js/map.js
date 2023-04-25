@@ -236,6 +236,8 @@ function initMap() {
 
     });
 
+
+
     // Watch for location changes
     navigator.geolocation.watchPosition(function (position) {
         // Update marker position
@@ -298,10 +300,6 @@ function updateMarkerPosition(marker, position, speed) {
     var startTime = Date.now();
     animateMarker(marker, coords, startTime, speed);
 }
-
-
-
-
 
 function deletePolygons(polygons) {
 
@@ -458,10 +456,15 @@ function getInfowindow(marker, map) {
                 content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span><br><span>" + marker.position + "</span>";
             }
 
+
+
             // set the content of the infowindow and open it
             infowindow.setContent(content);
             infowindow.open(map, marker);
         }
+        infowindow.addListener('closeclick', function () {
+            removeMarker(marker);
+        });
     });
 }
 
