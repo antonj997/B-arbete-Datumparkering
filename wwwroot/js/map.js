@@ -6,6 +6,7 @@ var reqcount = 0;
 var tapMarkers = [];
 var searchMarkers = [];
 
+
 var topCoords = [
     { lat: 63.18810627977892, lng: 14.550748585343229 },
     { lat: 63.18810627977892, lng: 14.69591697758541 },
@@ -240,8 +241,11 @@ function initMap() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
-
+        var start = null;
+        var speed = 0.0002;
         userPosition.setPosition(pos);
+        animateMarker(userPosition, pos, start, speed);
+        updateMarkerPosition(userPosition, pos, speed);
         
         
 
@@ -268,6 +272,35 @@ function initMap() {
     { enableHighAccuracy: true}
     );
 }
+
+// Använd requestAnimationFrame för att animera markörens position
+function animateMarker(marker, coords, startTime, speed) {
+    var elapsedTime = Date.now() - startTime;
+    var fraction = elapsedTime / speed;
+    if (fraction < 1) {
+        var lat = coords.startLat + fraction * (coords.endLat - coords.startLat);
+        var lng = coords.startLng + fraction * (coords.endLng - coords.startLng);
+        marker.setPosition(new google.maps.LatLng(lat, lng));
+        requestAnimationFrame(function () {
+            animateMarker(marker, coords, startTime, speed);
+        });
+    }
+}
+
+// Uppdatera markörens position med animation
+function updateMarkerPosition(marker, position, speed) {
+    var coords = {
+        startLat: marker.getPosition().lat(),
+        startLng: marker.getPosition().lng(),
+        endLat: position.lat,
+        endLng: position.lng
+    };
+    var startTime = Date.now();
+    animateMarker(marker, coords, startTime, speed);
+}
+
+
+
 
 function deletePolygons(polygons) {
 
