@@ -40,11 +40,11 @@ namespace Datumparkering.Controllers
         {
             if (IsTodayDateEven())
             {
-                return "hej Inatt slår det över till ojämnt datum, det innebär att du endast får parkera på gatunummer med jämnt husnummer mellan 00:00-07:00.";
+                return "Inatt slår det över till ojämnt datum, det innebär att du endast får parkera på gatunummer med jämnt husnummer mellan 00:00-07:00.";
             }
             else
             {
-                return "hej Inatt slår det över till jämnt datum, det innebär att du endast får parkera på gatunummer med ojämnt husnummer mellan 00:00-07:00.";
+                return "Inatt slår det över till jämnt datum, det innebär att du endast får parkera på gatunummer med ojämnt husnummer mellan 00:00-07:00.";
             }
         }
         public string ShowParkingRules()
