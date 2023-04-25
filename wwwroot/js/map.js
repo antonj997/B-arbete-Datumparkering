@@ -224,7 +224,13 @@ function initMap() {
          var segment = roadSegments[i];
          
      }*/
-      
+
+   
+    for (var i = 0; i < roadSegments.length; i++) {
+        var segment = roadSegments[i];
+        addLineToRoad(segment.origin, segment.destination, map, 2);
+    }
+   
 
 
     // Click listener to display the info window over userPosition
@@ -278,7 +284,15 @@ function initMap() {
         map.setCenter(pos);
     },
 
-        
+        function () {
+            // If geolocation is not enabled, default to center of map
+            map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
+        },
+        { enableHighAccuracy: true, maximumAge: 3000 }
+    );
+}
+
+
     function () {
       // If geolocation is not enabled, default to center of map
       map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
