@@ -301,10 +301,6 @@ function updateMarkerPosition(marker, position, speed) {
     animateMarker(marker, coords, startTime, speed);
 }
 
-
-
-
-
 function deletePolygons(polygons) {
 
         for (var i = 0; i < polygons.length; i++) {
