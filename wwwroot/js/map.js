@@ -191,8 +191,71 @@ function addLineToRoad(origin, destination, map, offset) {
     });
 }
 
-//-----------------------------------------------------------------------
+function addLineToNearestRoad(markerPosition, map) {
+    var directionsService = new google.maps.DirectionsService();
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+    var offset = 2;
+    directionsDisplay.setMap(map);
 
+    // Find the nearest road to the marker
+    var request = {
+        location: markerPosition,
+        radius: 1000, // Search within a 1000 meter radius
+        types: ['road'] // Only search for roads
+    };
+    var service = new google.maps.places.PlacesService(map);
+    service.nearbySearch(request, function (results, status) {
+        if (status == google.maps.places.PlacesServiceStatus.OK) {
+            // Use the first result (closest road) as a waypoint
+            var origin = markerPosition;
+            var destination = results[0].geometry.location;
+            var waypoints = [{ location: destination, stopover: true }];
+
+            // Get directions with intermediate waypoints
+            var request = {
+                origin: origin,
+                destination: destination,
+                waypoints: waypoints,
+                travelMode: 'DRIVING'
+            };
+
+            directionsService.route(request, function (result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    var polyline1 = new google.maps.Polyline({
+                        path: [],
+                        strokeColor: '#eb4034',
+                        strokeWeight: 4
+                    });
+                    var polyline2 = new google.maps.Polyline({
+                        path: [],
+                        strokeColor: '#349435',
+                        strokeWeight: 4
+                    });
+
+                    var legs = result.routes[0].legs;
+                    for (var i = 0; i < legs.length; i++) {
+                        var steps = legs[i].steps;
+                        for (var j = 0; j < steps.length; j++) {
+                            var nextSegment = steps[j].path;
+                            for (var k = 0; k < nextSegment.length; k++) {
+                                var point1 = google.maps.geometry.spherical.computeOffset(nextSegment[k], offset, 90);
+                                var point2 = google.maps.geometry.spherical.computeOffset(nextSegment[k], offset, 270);
+
+                                polyline1.getPath().push(point1);
+                                polyline2.getPath().push(point2);
+                            }
+                        }
+                    }
+                    polyline1.setMap(map);
+                    polyline2.setMap(map);
+                }
+            });
+        }
+    });
+}
+
+
+//-----------------------------------------------------------------------
 function initMap() {
     // Initialize the map
     map = new google.maps.Map(document.getElementById("map"), {
@@ -217,23 +280,11 @@ function initMap() {
     google.maps.event.addListener(map, 'zoom_changed', function () {
         deletePolygons(polygons);
     });
-    /*
-     for (var i = 0; i < roadSegments.length; i++) {
-         var segment = roadSegments[i];
-         
-     }*/
-
 
     // Click listener to display the info window over userPosition
     userPosition.addListener("click", () => {
         // Open infowindow for user marker
         getInfowindow(userPosition, map);
-    });
-
-
-    map.addListener("click", (event) => {
-        AddMarkerWithClick(map, event);
-
     });
 
     // Watch for location changes
@@ -245,8 +296,6 @@ function initMap() {
         };
 
         userPosition.setPosition(pos);
-
-
 
         console.log("update");
 
@@ -260,18 +309,42 @@ function initMap() {
             });
         }
 
-
         // Center the map over the marker
         map.setCenter(pos);
     },
-      
-    function () {
-      // If geolocation is not enabled, default to center of map
-      map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
-    },
-    { enableHighAccuracy: true}
+
+        function () {
+            // If geolocation is not enabled, default to center of map
+            map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
+        },
+        { enableHighAccuracy: true }
     );
+
+    // Listen for click events on the map
+    map.addListener('click', function (event) {
+        // Get the location of the click
+        var clickLocation = event.latLng;
+        addLineToNearestRoad(clickLocation, map)
+        /*
+        // Find the closest road to the click location
+        var request = {
+            origin: clickLocation,
+            destination: clickLocation,
+            travelMode: "DRIVING"
+        };
+        var directionsService = new google.maps.DirectionsService();
+        directionsService.route(request, function (result, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+                // Get the coordinates of the closest road
+                var closestRoadCoordinates = result.routes[0].overview_path;
+
+                // Draw a line on the closest road
+                addLineToRoad(closestRoadCoordinates[0], closestRoadCoordinates[closestRoadCoordinates.length - 1], map, 2);
+            
+        });*/
+    });
 }
+
 
 // Använd requestAnimationFrame för att animera markörens position
 function animateMarker(marker, coords, startTime, speed) {
