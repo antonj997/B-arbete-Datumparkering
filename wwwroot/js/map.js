@@ -192,7 +192,6 @@ function addLineToRoad(origin, destination, map, offset) {
 }
 
 //-----------------------------------------------------------------------
-
 function initMap() {
     // Initialize the map
     map = new google.maps.Map(document.getElementById("map"), {
@@ -215,6 +214,17 @@ function initMap() {
             rotation: 0, // Set the initial rotation to 0 degrees
         }
     });
+    
+
+    google.maps.event.addListener(map, 'zoom_changed', function () {
+        deletePolygons(polygons);
+    });
+    /*
+     for (var i = 0; i < roadSegments.length; i++) {
+         var segment = roadSegments[i];
+         
+     }*/
+
    
     for (var i = 0; i < roadSegments.length; i++) {
         var segment = roadSegments[i];
@@ -222,16 +232,24 @@ function initMap() {
     }
    
 
+
     // Click listener to display the info window over userPosition
     userPosition.addListener("click", () => {
         // Open infowindow for user marker
         getInfowindow(userPosition, map);
     });
-    
+
 
     map.addListener("click", (event) => {
         AddMarkerWithClick(map, event);
 
+    });
+
+    var deviceOrientation = 0;
+
+    // Listen for changes in device orientation
+    window.addEventListener('deviceorientation', function (event) {
+        deviceOrientation = event.alpha;
     });
 
     // Watch for location changes
@@ -241,6 +259,9 @@ function initMap() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
+       
+        userPosition.setPosition(pos);
+
         var start = null;
         var speed = 0.0002;
         userPosition.setPosition(pos);
@@ -252,19 +273,26 @@ function initMap() {
         console.log("update");
 
         // Update marker rotation to indicate heading
-        var heading = position.coords.heading;
-        if (typeof heading !== 'undefined') {
-            userPosition.setIcon({
-                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                scale: 5,
-                rotation: heading // Set the rotation to the current heading
-            });
-        }
+        userPosition.setIcon({
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            scale: 5,
+            rotation: deviceOrientation // Set the rotation to the device orientation
+        });
 
-
-      // Center the map over the marker
-      map.setCenter(pos);
+ 
+        // Center the map over the marker
+        map.setCenter(pos);
     },
+
+        function () {
+            // If geolocation is not enabled, default to center of map
+            map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
+        },
+        { enableHighAccuracy: true, maximumAge: 3000 }
+    );
+}
+
+
     function () {
       // If geolocation is not enabled, default to center of map
       map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
@@ -298,6 +326,7 @@ function updateMarkerPosition(marker, position, speed) {
     var startTime = Date.now();
     animateMarker(marker, coords, startTime, speed);
 }
+
 
 
 
