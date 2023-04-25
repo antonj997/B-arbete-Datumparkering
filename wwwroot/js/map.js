@@ -171,7 +171,7 @@ function addLineToRoad(userPosition, map) {
 
             if (nearestResult) {
                 var request = {
-                    origin: userPosition.getPosition(),
+                    origin: testPos,
                     destination: nearestResult.geometry.location,
                     travelMode: "DRIVING"
                 };
@@ -271,7 +271,7 @@ function initMap() {
             type: 'address'
         }, processResults);
 
-
+         
       // Center the map over the marker
       map.setCenter(pos);
     },
@@ -282,7 +282,7 @@ function initMap() {
     { enableHighAccuracy: true, maximumAge: 3000 }
     );
 }
-/*
+
 function drawParkingPolylines(map, userLocation) {
     apiKey = "AIzaSyBkBbF39y-c4swhua_X7KozY0W8nSMnqKA";
     // Get the nearest road to the user's location
@@ -360,7 +360,7 @@ function drawParkingPolylines(map, userLocation) {
     });
 }
 
-*/
+
 
 function processResults(results, status) {
     console.log("test");
@@ -381,7 +381,7 @@ function deletePolygons(polygons) {
 }
 
 
-navigator.geolocation.watchPosition(successCallback, errorCallback, options);
+navigator.geolocation.watchPosition(successCallback, errorCallback);
 function slowZoom(map) {
     setTimeout(function () {
         // zooma in på kartan från nivå 12 till 15 i 2 sekunder
@@ -566,8 +566,4 @@ function successCallback(position) {
 function errorCallback(error) {
 
 }
-var options = {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0
-};
+
