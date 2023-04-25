@@ -212,7 +212,7 @@ function initMap() {
         }
     });
 
-    //drawParkingPolylines(map, userPosition)
+    
 
     google.maps.event.addListener(map, 'zoom_changed', function () {
         deletePolygons(polygons);
@@ -222,7 +222,6 @@ function initMap() {
          var segment = roadSegments[i];
          
      }*/
-    //addLineToRoad(userPosition, map);
 
     // Click listener to display the info window over userPosition
     userPosition.addListener("click", () => {
@@ -250,11 +249,7 @@ function initMap() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
-        var testPos = {
-            lat: 63.181802406459354,
-            lng: 14.618237666343846
-        };
-
+       
         userPosition.setPosition(pos);
 
 
