@@ -144,53 +144,50 @@ var roadSegments = [
 var polygons = [];
 //---------------------------------------------------------------
 
-function addLineToRoad(origin, destination, map, offset) {
+function addLineToRoad(userPosition, map) {
     var directionsService = new google.maps.DirectionsService();
-    var directionsDisplay = new google.maps.DirectionsRenderer();
+    var directionsDisplay = new google.maps.DirectionsRenderer({
+        suppressMarkers: true, // suppress default markers on the route
+        polylineOptions: { // set the style of the polyline
+            strokeColor: '#eb4034',
+            strokeWeight: 4
+        }
+    });
     directionsDisplay.setMap(map);
 
+    // Get the user's current location
     var request = {
-        origin: origin,
-        destination: destination,
-        travelMode: "DRIVING"
+        location: userPosition.getPosition(),
+        radius: 20, // 20 meters radius
+        type: 'address'
     };
-
-
-
-    directionsService.route(request, function (result, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
-            var polyline1 = new google.maps.Polyline({
-                path: [],
-                strokeColor: '#eb4034',
-                strokeWeight: 4
-            });
-            var polyline2 = new google.maps.Polyline({
-                path: [],
-                strokeColor: '#349435',
-                strokeWeight: 4
+    var service = new google.maps.places.PlacesService(map);
+    service.nearbySearch(request, function (results, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+            // Find the nearest address on the road
+            var nearestResult = results.find(function (result) {
+                return result.types.includes('route');
             });
 
-            var legs = result.routes[0].legs;
-            for (var i = 0; i < legs.length; i++) {
-                var steps = legs[i].steps;
-                for (var j = 0; j < steps.length; j++) {
-                    var nextSegment = steps[j].path;
-                    for (var k = 0; k < nextSegment.length; k++) {
-                        var point1 = google.maps.geometry.spherical.computeOffset(nextSegment[k], offset, 90);
-                        var point2 = google.maps.geometry.spherical.computeOffset(nextSegment[k], offset, 270);
-
-                        polyline1.getPath().push(point1);
-                        polyline2.getPath().push(point2);
+            if (nearestResult) {
+                var request = {
+                    origin: userPosition.getPosition(),
+                    destination: nearestResult.geometry.location,
+                    travelMode: "DRIVING"
+                };
+                directionsService.route(request, function (result, status) {
+                    if (status == google.maps.DirectionsStatus.OK) {
+                        directionsDisplay.setDirections(result);
                     }
-                }
+                });
             }
-            polyline1.setMap(map);
-            polyline2.setMap(map);
         }
     });
 }
 
 //-----------------------------------------------------------------------
+
+var service;
 
 function initMap() {
     // Initialize the map
@@ -213,28 +210,37 @@ function initMap() {
         }
     });
 
+    service = new google.maps.places.PlacesService(map);
 
+    //drawParkingPolylines(map, userPosition)
 
     google.maps.event.addListener(map, 'zoom_changed', function () {
-       deletePolygons(polygons);
+        deletePolygons(polygons);
     });
-   
-    for (var i = 0; i < roadSegments.length; i++) {
-        var segment = roadSegments[i];
-        addLineToRoad(segment.origin, segment.destination, map, 2);
-    }
-   
+    /*
+     for (var i = 0; i < roadSegments.length; i++) {
+         var segment = roadSegments[i];
+         
+     }*/
+    addLineToRoad(userPosition, map);
 
     // Click listener to display the info window over userPosition
     userPosition.addListener("click", () => {
         // Open infowindow for user marker
         getInfowindow(userPosition, map);
     });
-    
+
 
     map.addListener("click", (event) => {
         AddMarkerWithClick(map, event);
 
+    });
+
+    var deviceOrientation = 0;
+
+    // Listen for changes in device orientation
+    window.addEventListener('deviceorientation', function (event) {
+        deviceOrientation = event.alpha;
     });
 
     // Watch for location changes
@@ -244,33 +250,130 @@ function initMap() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
+        var testPos = {
+            lat: 63.181802406459354,
+            lng: 14.618237666343846
+        };
 
         userPosition.setPosition(pos);
-        
-        
+
+
 
         console.log("update");
 
         // Update marker rotation to indicate heading
-        var heading = position.coords.heading;
-        if (typeof heading !== 'undefined') {
-            userPosition.setIcon({
-                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                scale: 5,
-                rotation: heading // Set the rotation to the current heading
-            });
-        }
+        userPosition.setIcon({
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            scale: 5,
+            rotation: deviceOrientation // Set the rotation to the device orientation
+        });
+
+        service.nearbySearch({
+            location: testPos,
+            radius: 20, // 5 meters radius
+            type: 'address'
+        }, processResults);
 
 
-      // Center the map over the marker
-      map.setCenter(pos);
+        // Center the map over the marker
+        map.setCenter(pos);
     },
-    function () {
-      // If geolocation is not enabled, default to center of map
-      map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
-    },
-    { enableHighAccuracy: true, maximumAge: 3000 }
+        function () {
+            // If geolocation is not enabled, default to center of map
+            map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
+        },
+        { enableHighAccuracy: true, maximumAge: 3000 }
     );
+}
+
+/*
+function drawParkingPolylines(map, userLocation) {
+    apiKey = "AIzaSyBkBbF39y-c4swhua_X7KozY0W8nSMnqKA";
+    // Get the nearest road to the user's location
+    var roadRequest = {
+        location: userLocation,
+        radius: 50, // Search within 50 meters of the user's location
+        interpolate: true,
+    };
+    var roadService = new google.maps.RoadsService();
+    roadService.nearestRoads(roadRequest, function (results, status) {
+        if (status !== google.maps.RoadsServiceStatus.OK) {
+            console.error('Error getting nearest road:', status);
+            return;
+        }
+        // Get the first road result
+        var nearestRoad = results[0];
+        // Get the nearest road segment to the user's location
+        var segmentRequest = {
+            path: [nearestRoad.snappedPoint],
+            interpolate: true,
+        };
+        roadService.snapToRoads(segmentRequest, function (results, status) {
+            if (status !== google.maps.RoadsServiceStatus.OK) {
+                console.error('Error snapping to road:', status);
+                return;
+            }
+            // Get the first road segment result
+            var roadSegment = results[0];
+            // Determine which side of the street the user can park on based on the date
+            var today = new Date();
+            var dayOfMonth = today.getDate();
+            var isOddDay = dayOfMonth % 2 !== 0;
+            var canParkHere = isOddDay ? roadSegment.sideOfStreet === 'EVEN' : roadSegment.sideOfStreet === 'ODD';
+            // Define the polylines
+            var lineColor = canParkHere ? '#00FF00' : '#FF0000';
+            var lineSymbol = {
+                path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                strokeColor: lineColor,
+                strokeWeight: 2,
+                scale: 3,
+            };
+            var lineCoordinates = [
+                { lat: roadSegment.startLocation.latitude, lng: roadSegment.startLocation.longitude },
+                { lat: roadSegment.endLocation.latitude, lng: roadSegment.endLocation.longitude },
+            ];
+
+            // Make API call to snap the line to the road
+            var pathValues = [];
+            for (var i = 0; i < lineCoordinates.length; i++) {
+                pathValues.push(lineCoordinates[i].lat + ',' + lineCoordinates[i].lng);
+            }
+            fetch('https://roads.googleapis.com/v1/snapToRoads?path=' + pathValues.join('|') + '&interpolate=true&key=' + apiKey)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    var snappedCoordinates = data.snappedPoints.map(function (point) {
+                        return { lat: point.location.latitude, lng: point.location.longitude };
+                    });
+
+                    // Draw the snapped polyline
+                    var snappedPolyline = new google.maps.Polyline({
+                        path: snappedCoordinates,
+                        strokeColor: lineColor,
+                        strokeOpacity: 0.8,
+                        strokeWeight: 5,
+                        icons: [{ icon: lineSymbol, offset: '100%' }, { icon: lineSymbol, offset: '0%' }],
+                        map: map,
+                    });
+                })
+                .catch(function (error) {
+                    console.error('Error snapping to road:', error);
+                });
+        });
+    });
+}
+
+*/
+
+function processResults(results, status) {
+    console.log("test");
+    if (status === google.maps.places.PlacesServiceStatus.OK) {
+        for (var i = 0; i < results.length; i++) {
+            var place = results[i];
+            console.log(place.formatted_address);
+        }
+    }
 }
 
 function deletePolygons(polygons) {
