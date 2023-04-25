@@ -6,6 +6,7 @@ var reqcount = 0;
 var tapMarkers = [];
 var searchMarkers = [];
 
+
 var topCoords = [
     { lat: 63.18810627977892, lng: 14.550748585343229 },
     { lat: 63.18810627977892, lng: 14.69591697758541 },
@@ -202,6 +203,8 @@ function initMap() {
     });
     SetBoundry(map);
     slowZoom(map);
+    addZoomChangeListener(map);
+
     // Define the marker for current location
     var userPosition = new google.maps.Marker({
         map: map,
@@ -211,7 +214,6 @@ function initMap() {
             rotation: 0, // Set the initial rotation to 0 degrees
         }
     });
-
     
 
     google.maps.event.addListener(map, 'zoom_changed', function () {
@@ -222,6 +224,14 @@ function initMap() {
          var segment = roadSegments[i];
          
      }*/
+
+   
+    for (var i = 0; i < roadSegments.length; i++) {
+        var segment = roadSegments[i];
+        addLineToRoad(segment.origin, segment.destination, map, 2);
+    }
+   
+
 
     // Click listener to display the info window over userPosition
     userPosition.addListener("click", () => {
@@ -252,7 +262,13 @@ function initMap() {
        
         userPosition.setPosition(pos);
 
-
+        var start = null;
+        var speed = 0.0002;
+        userPosition.setPosition(pos);
+        animateMarker(userPosition, pos, start, speed);
+        updateMarkerPosition(userPosition, pos, speed);
+        
+        
 
         console.log("update");
 
@@ -267,6 +283,7 @@ function initMap() {
         // Center the map over the marker
         map.setCenter(pos);
     },
+
         function () {
             // If geolocation is not enabled, default to center of map
             map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
@@ -274,6 +291,44 @@ function initMap() {
         { enableHighAccuracy: true, maximumAge: 3000 }
     );
 }
+
+
+    function () {
+      // If geolocation is not enabled, default to center of map
+      map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
+    },
+    { enableHighAccuracy: true}
+    );
+}
+
+// Använd requestAnimationFrame för att animera markörens position
+function animateMarker(marker, coords, startTime, speed) {
+    var elapsedTime = Date.now() - startTime;
+    var fraction = elapsedTime / speed;
+    if (fraction < 1) {
+        var lat = coords.startLat + fraction * (coords.endLat - coords.startLat);
+        var lng = coords.startLng + fraction * (coords.endLng - coords.startLng);
+        marker.setPosition(new google.maps.LatLng(lat, lng));
+        requestAnimationFrame(function () {
+            animateMarker(marker, coords, startTime, speed);
+        });
+    }
+}
+
+// Uppdatera markörens position med animation
+function updateMarkerPosition(marker, position, speed) {
+    var coords = {
+        startLat: marker.getPosition().lat(),
+        startLng: marker.getPosition().lng(),
+        endLat: position.lat,
+        endLng: position.lng
+    };
+    var startTime = Date.now();
+    animateMarker(marker, coords, startTime, speed);
+}
+
+
+
 
 
 function deletePolygons(polygons) {
@@ -284,6 +339,11 @@ function deletePolygons(polygons) {
     
 }
 
+function addZoomChangeListener(map) {
+    google.maps.event.addListener(map, 'zoom_changed', function () {
+        deletePolygons(polygons);
+    });
+}
 
 navigator.geolocation.watchPosition(successCallback, errorCallback, options);
 function slowZoom(map) {
@@ -473,5 +533,4 @@ function errorCallback(error) {
 var options = {
     enableHighAccuracy: true,
     timeout: 5000,
-    maximumAge: 0
 };
