@@ -6,6 +6,7 @@ var reqcount = 0;
 var tapMarkers = [];
 var searchMarkers = [];
 
+
 var topCoords = [
     { lat: 63.18810627977892, lng: 14.550748585343229 },
     { lat: 63.18810627977892, lng: 14.69591697758541 },
@@ -240,8 +241,11 @@ function initMap() {
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
+        var start = null;
+        var speed = 0.0002;
         userPosition.setPosition(pos);
-        animateMarker(userPosition, pos, )
+        animateMarker(userPosition, pos, start, speed);
+        updateMarkerPosition(userPosition, pos, speed);
         
         
 
