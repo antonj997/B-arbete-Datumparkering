@@ -171,7 +171,7 @@ function addLineToRoad(userPosition, map) {
 
             if (nearestResult) {
                 var request = {
-                    origin: testPos,
+                    origin: userPosition.getPosition(),
                     destination: nearestResult.geometry.location,
                     travelMode: "DRIVING"
                 };
