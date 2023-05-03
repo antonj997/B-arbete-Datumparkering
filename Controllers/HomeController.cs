@@ -1,15 +1,12 @@
 ﻿using Datumparkering.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.UserSecrets;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting;
-using Datumparkering.Infrastrukture;
 using System;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System.Diagnostics;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
+
 namespace Datumparkering.Controllers
 {
     public class HomeController : Controller
@@ -36,16 +33,25 @@ namespace Datumparkering.Controllers
             int day = today.Day;
             return day % 2 == 0;
         }
-        public string GetParkingMessage()
+        public string GetParkingMessage(int houseNumber)
         {
-            if (IsTodayDateEven())
+            bool isOddHouseNumber = houseNumber % 2 != 0;
+            bool isTodayDateEven = DateTime.Now.Day % 2 == 0;
+
+            if (isOddHouseNumber && !isTodayDateEven || !isOddHouseNumber && isTodayDateEven)
             {
-                return "Inatt slår det över till ojämnt datum, det innebär att du endast får parkera på gatunummer med jämnt husnummer mellan 00:00-07:00.";
+                return "Inatt mellan 00:00-07:00 får du stå på denna adress.";
             }
             else
             {
-                return "Inatt slår det över till jämnt datum, det innebär att du endast får parkera på gatunummer med ojämnt husnummer mellan 00:00-07:00.";
+                return "Inatt mellan 00:00-07:00 får du inte stå här.";
             }
+        }
+       
+        public string CanIParkHere()
+        {
+            int sampleHouseNumber = 123; // Byt ut mot det faktiska husnumret
+            return GetParkingMessage(sampleHouseNumber);
         }
         public string ShowParkingRules()
         {
@@ -59,10 +65,9 @@ namespace Datumparkering.Controllers
         public IActionResult Index()
         {
             ViewBag.apiConnectionString = configuration.GetConnectionString("GoogleMapsApiKey");
+
             ViewBag.TodaysDate = GetTodaysDate();
             bool EvanDay = IsTodayDateEven();
-            ViewBag.ParkingMessage = GetParkingMessage();
-            
             return View();
         }
 
