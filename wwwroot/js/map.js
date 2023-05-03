@@ -5,7 +5,7 @@ var searchMarker;
 var reqcount = 0;
 var tapMarkers = [];
 var searchMarkers = [];
-
+var followToggle = false;
 
 var topCoords = [
     { lat: 63.18810627977892, lng: 14.550748585343229 },
@@ -236,8 +236,17 @@ function initMap() {
 
     });
 
+    var followButton = document.getElementById("follow-button");
 
+    followButton.addEventListener("click", function () {
+        this.classList.toggle("active");
+        console.log("toggled");
+    });
 
+    map.addListener("dragstart", function () {
+        followButton.classList.remove("active");
+        console.log("removed toggle");
+    });
     // Watch for location changes
     navigator.geolocation.watchPosition(function (position) {
         // Update marker position
@@ -247,7 +256,6 @@ function initMap() {
         };
 
         userPosition.setPosition(pos);
-
 
 
         console.log("update");
@@ -264,7 +272,10 @@ function initMap() {
 
 
         // Center the map over the marker
-        map.setCenter(pos);
+        if (followButton.classList.contains("active")) {
+            map.setCenter(pos);
+        }
+        
     },
       
     function () {
