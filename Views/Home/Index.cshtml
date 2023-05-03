@@ -16,8 +16,11 @@
 
 <div class="info-container">
     <div class="date-container">
+        <div style="display:flex;">
+            <label style="margin-right:10px;"><i class="fa-solid fa-location-dot" style="color: #9381ff;"></i></label>
         <label id="parkingMessage">@*@ViewBag.ParkingMessage.ToString()*@</label>
-        <button id="toggleButton" class="styled-button"><i class="fas fa-times"></i></button>
+        </div>
+        <button id="toggleButton" class="styled-button">Inatt får du stå på sidan med <span>? </span>gatunummer</button>
     </div>
     <button id="read-more-btn" onclick="showHide()">Läs mer om datumparkering</button>
 </div>
@@ -27,7 +30,7 @@
     <input type="text" id="search-input" placeholder="Skriv en adress">
     <button class="searchBtn" onclick="search()">Sök</button>
 </div>
-<button id="restoreButton" class="styled-button" style="display:none;">Se inforuta</button>
+<button id="restoreButton" class="styled-button" style="display:none;">Inatt får du stå på sidan med <span>? </span>gatunummer</button>
 
 <div id="map">
 
