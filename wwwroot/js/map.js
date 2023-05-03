@@ -237,6 +237,7 @@ function initMap() {
     });
 
     var followButton = document.getElementById("follow-button");
+    followButton.classList.toggle("active");
 
     followButton.addEventListener("click", function () {
         this.classList.toggle("active");
