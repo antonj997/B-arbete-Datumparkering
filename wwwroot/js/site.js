@@ -17,3 +17,15 @@ function showHide() {
         btnText.innerHTML = "Läs mer om datumparkering";
     }
 }
+
+$(document).ready(function () {
+    $("#toggleButton").on("click", function () {
+        $(".date-container").hide();
+        $("#restoreButton").show();
+    });
+
+    $("#restoreButton").on("click", function () {
+        $(".date-container").show();
+        $(this).hide();
+    });
+});

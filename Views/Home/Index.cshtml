@@ -4,25 +4,34 @@
 <script src="~/js/map.js"></script>
 <script src="~/js/site.js"></script>
 <script src="@ViewBag.apiConnectionString" async defer></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css"/>
+
 
 <link href="~/css/site.css" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
 
-<div class="date-container">
-    <label>Dagens datum är: @ViewBag.TodaysDate.ToString("yyyy-MM-dd")</label>
-    <label>@ViewBag.ParkingMessage.ToString()</label>
+<div class="info-container">
+    <div class="date-container">
+        <label>Dagens datum är: @ViewBag.TodaysDate.ToString("yyyy-MM-dd")</label>
+        <label>@ViewBag.ParkingMessage.ToString()</label>
+        <button id="toggleButton" class="styled-button"><i class="fas fa-times"></i></button>
+    </div>
+    <button id="read-more-btn" onclick="showHide()">Läs mer om datumparkering</button>
 </div>
+
 
 <div id="search-box">
     <input type="text" id="search-input" placeholder="Skriv en adress">
     <button class="searchBtn" onclick="search()">Sök</button>
 </div>
+<button id="restoreButton" class="styled-button" style="display:none;">Se inforuta</button>
 
 <div id="map">
 
 </div>
-<button id="read-more-btn" onclick="showHide()">Läs mer om datumparkering</button>
+
 <div id="more" style="display:none">
     <p>Datumparkering gäller nattetid från 1 oktober till 31 maj mellan klockan 00.00 och 07.00. Och det gäller bara inom zonen för datumparkering som innefattar hela centrala Östersund, Lugnvik, Odensala, Torvalla och den tätbebyggda delen av Frösön (se karta).</p>
     <p>Datumparkering gäller även på markerade parkeringsrutor.</p>

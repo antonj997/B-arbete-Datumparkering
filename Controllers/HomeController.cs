@@ -58,10 +58,7 @@ namespace Datumparkering.Controllers
 
         public IActionResult Index()
         {
-            //MyApiConnection _apiConnection = new MyApiConnection();
-            //ViewBag.apiConnectionString = _apiConnection.GetConnectionString();
-
-           ViewBag.apiConnectionString = configuration.GetConnectionString("GoogleMapsApiKey");
+            ViewBag.apiConnectionString = configuration.GetConnectionString("GoogleMapsApiKey");
             ViewBag.TodaysDate = GetTodaysDate();
             bool EvanDay = IsTodayDateEven();
             ViewBag.ParkingMessage = GetParkingMessage();
