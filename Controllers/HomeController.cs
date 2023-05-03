@@ -47,31 +47,7 @@ namespace Datumparkering.Controllers
                 return "Inatt mellan 00:00-07:00 får du inte stå här.";
             }
         }
-        public async Task<string> GetAddressFromCurrentLocationAsync()
-        {
-            // Ersätt dessa med dina faktiska koordinater
-            double latitude = 59.3293;
-            double longitude = 18.0686;
-
-            string googleMapsApiKey = "AIzaSyBkBbF39y-c4swhua_X7KozY0W8nSMnqKA"; // Ersätt med din Google Maps API-nyckel
-            string requestUrl = $"https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}&key={googleMapsApiKey}";
-
-            using (HttpClient client = new HttpClient())
-            {
-                HttpResponseMessage response = await client.GetAsync(requestUrl);
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonResult = await response.Content.ReadAsStringAsync();
-                    JObject jsonResponse = JObject.Parse(jsonResult);
-                    string address = jsonResponse["results"][0]["formatted_address"].ToString();
-                    return address;
-                }
-                else
-                {
-                    throw new Exception("Kunde inte hämta adressen.");
-                }
-            }
-        }
+       
         public string CanIParkHere()
         {
             int sampleHouseNumber = 123; // Byt ut mot det faktiska husnumret

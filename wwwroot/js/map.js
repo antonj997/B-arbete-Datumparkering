@@ -441,7 +441,17 @@ function removeMarker(marker) {
     }
 }
 
-// Gets location of marker and opens a infowindow with relevant content
+function getAddressContent(address, isOddStreetNumber, isOddDate, isEvenStreetNumber, isEvenDate) {
+    let content = address;
+    if (isOddStreetNumber && isOddDate || isEvenStreetNumber && isEvenDate) {
+        content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span><br><span>" + address + "</span>";
+    } else {
+        content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span><br><span>" + address + "</span>";
+    }
+    return content;
+}
+
+
 function getInfowindow(marker, map) {
     const geocoder = new google.maps.Geocoder();
     var infowindow = new google.maps.InfoWindow();
@@ -459,15 +469,11 @@ function getInfowindow(marker, map) {
             const isOddDate = date.getDate() % 2 !== 0;
             const isEvenDate = date.getDate() % 2 == 0;
 
-            // set the content of the infowindow based on the street number and date
-            let content = address;
-            if (isOddStreetNumber && isOddDate || isEvenStreetNumber && isEvenDate) {
-                content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span><br><span>" + marker.position + "</span>";
-            } else {
-                content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span><br><span>" + marker.position + "</span>";
-            }
+            // generate the content using the getAddressContent function
+            const content = getAddressContent(address, isOddStreetNumber, isOddDate, isEvenStreetNumber, isEvenDate);
 
-
+            // set the content of the parkingMessage label
+            document.getElementById("parkingMessage").innerHTML = content;
 
             // set the content of the infowindow and open it
             infowindow.setContent(content);
@@ -478,6 +484,45 @@ function getInfowindow(marker, map) {
         });
     });
 }
+
+
+// Gets location of marker and opens a infowindow with relevant content
+//function getInfowindow(marker, map) {
+//    const geocoder = new google.maps.Geocoder();
+//    var infowindow = new google.maps.InfoWindow();
+//    geocoder.geocode({ location: marker.position }, function (results, status) {
+//        if (status === "OK" && results[0]) {
+//            const address = results[0].formatted_address;
+//            const streetNumber = address.match(/\d+/); // get the street number
+
+//            // check if the street number is odd or even
+//            const isOddStreetNumber = streetNumber % 2 !== 0;
+//            const isEvenStreetNumber = streetNumber % 2 == 0;
+
+//            // check if the date is odd or even
+//            const date = new Date();
+//            const isOddDate = date.getDate() % 2 !== 0;
+//            const isEvenDate = date.getDate() % 2 == 0;
+
+//            // set the content of the infowindow based on the street number and date
+//            let content = address;
+//            if (isOddStreetNumber && isOddDate || isEvenStreetNumber && isEvenDate) {
+//                content += "<br><span style='color:green'>Inatt mellan 00:00-07:00 får du stå på denna adress.</span><br><span>" + marker.position + "</span>";
+//            } else {
+//                content += "<br><span style='color:red'>Inatt mellan 00:00-07:00 får du inte stå här.</span><br><span>" + marker.position + "</span>";
+//            }
+//            document.getElementById("parkingMessage").innerHTML = content;
+
+
+//            // set the content of the infowindow and open it
+//            infowindow.setContent(content);
+//            infowindow.open(map, marker);
+//        }
+//        infowindow.addListener('closeclick', function () {
+//            removeMarker(marker);
+//        });
+//    });
+//}
 
 
 // Addig marker on location of clicklistener
