@@ -86,18 +86,12 @@ namespace Datumparkering.Controllers
         
       
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             ViewBag.apiConnectionString = configuration.GetConnectionString("GoogleMapsApiKey");
+
             ViewBag.TodaysDate = GetTodaysDate();
             bool EvanDay = IsTodayDateEven();
-            
-
-            string address = await GetAddressFromCurrentLocationAsync();
-            int houseNumber = int.Parse(Regex.Match(address, @"\d+").Value);
-            ViewBag.ParkingMessage = GetParkingMessage(houseNumber);
-
-
             return View();
         }
 
