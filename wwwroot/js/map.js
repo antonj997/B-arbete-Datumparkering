@@ -244,8 +244,10 @@ function initMap() {
     });
 
     map.addListener("dragstart", function () {
-        followButton.classList.remove("active");
-        console.log("removed toggle");
+        if (followButton.classList.contains("active")) {
+            followButton.classList.remove("active");
+            console.log("removed toggle");
+        }
     });
     // Watch for location changes
     navigator.geolocation.watchPosition(function (position) {
@@ -282,7 +284,7 @@ function initMap() {
       // If geolocation is not enabled, default to center of map
       map.setCenter({ lat: 63.1766832, lng: 14.636068099999989 });
     },
-    { enableHighAccuracy: true}
+        { enableHighAccuracy: true,}
     );
 }
 

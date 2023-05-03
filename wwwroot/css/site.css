@@ -169,5 +169,8 @@ body {
     width: 4rem;
     height: 4rem;
     border: none;
+}
+
+.active {
     color: #9381FF;
 }
