@@ -59,7 +59,7 @@ body {
   padding: 0;
 }
 .date-container {
-    position: absolute;
+    position: relative;
     top: 12%;
     width: 100%;
     margin: 0;
