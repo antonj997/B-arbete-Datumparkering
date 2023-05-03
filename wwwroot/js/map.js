@@ -5,7 +5,7 @@ var searchMarker;
 var reqcount = 0;
 var tapMarkers = [];
 var searchMarkers = [];
-var followToggle = false;
+
 
 var topCoords = [
     { lat: 63.18810627977892, lng: 14.550748585343229 },
