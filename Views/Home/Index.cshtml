@@ -25,7 +25,7 @@
     <div class="date-container">
         <div style="display:flex;">
             <label style="margin-right:10px;"><i class="fa-solid fa-location-dot" style="color: #9381ff;"></i></label>
-        <label id="parkingMessage">@*@ViewBag.ParkingMessage.ToString()*@</label>
+        <label id="parkingMessage"></label>
         </div>
         <button id="toggleButton" class="styled-button">Inatt får du stå på sidan med <span>? </span>gatunummer</button>
     </div>
@@ -39,6 +39,18 @@
 
 <button id="follow-button"><i class="fa-solid fa-crosshairs fa-3x"></i></button>
 
+<button id="feedbackButton">Ge oss feedback</button>
+<div id="feedbackModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Ge oss feedback</h2>
+        <form id="feedbackForm">
+            <textarea id="feedbackMessage" rows="4" cols="50" placeholder="Skriv din feedback här..."></textarea>
+            <br>
+            <button type="submit">Skicka</button>
+        </form>
+    </div>
+</div>
 
 <div id="more" style="display:none">
     <p>Datumparkering gäller nattetid från 1 oktober till 31 maj mellan klockan 00.00 och 07.00. Och det gäller bara inom zonen för datumparkering som innefattar hela centrala Östersund, Lugnvik, Odensala, Torvalla och den tätbebyggda delen av Frösön (se karta).</p>

@@ -29,3 +29,31 @@ $(document).ready(function () {
         $(this).hide();
     });
 });
+
+document.getElementById("feedbackButton").addEventListener("click", function () {
+    document.getElementById("feedbackModal").style.display = "block";
+});
+
+document.getElementsByClassName("close")[0].addEventListener("click", function () {
+    document.getElementById("feedbackModal").style.display = "none";
+});
+
+document.getElementById("feedbackForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const feedbackMessage = document.getElementById("feedbackMessage").value;
+
+    fetch("send_feedback.php", {
+        method: "POST",
+        body: JSON.stringify({ message: feedbackMessage }),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).then(response => {
+        if (response.ok) {
+            alert("Tack för din feedback!");
+        } else {
+            alert("Något gick fel. Försök igen senare.");
+        }
+        document.getElementById("feedbackModal").style.display = "none";
+    });
+});
