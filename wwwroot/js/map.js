@@ -244,13 +244,11 @@ function initMap() {
 
     followButton.addEventListener("click", function () {
         this.classList.toggle("follow");
-        console.log("toggled");
     });
 
     map.addListener("dragstart", function () {
         if (followButton.classList.contains("follow")) {
             followButton.classList.remove("follow");
-            console.log("removed toggle");
         }
     });
     // Watch for location changes

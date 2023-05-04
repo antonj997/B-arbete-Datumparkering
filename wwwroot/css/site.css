@@ -162,7 +162,9 @@ ui-container{
         transform: translateY(0%);
     }
 
-
+   #restoreButton{
+       border-top:2px solid lightgray;
+   }
 
 
 .follow {
