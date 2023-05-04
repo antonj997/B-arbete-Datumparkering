@@ -211,7 +211,8 @@ function initMap() {
             path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW, // Use an arrow icon
             scale: 5, // Set the size of the arrow
             rotation: 0, // Set the initial rotation to 0 degrees
-        }
+        },
+        markerType: "userPositionMarker"
     });
 
    
@@ -439,7 +440,7 @@ function search() {
 
 // Removes marker
 function removeMarker(marker) {
-    if (marker) {
+    if (marker && marker.markerType !== "userPositionMarker") {
         marker.setMap(null);
         tapMarkers.pop();
         searchMarkers.pop();
