@@ -1,23 +1,20 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+﻿
 function showHide() {
-    var moreText = document.getElementById("more");
-    var btnText = document.getElementById("read-more-btn");
-    var infoBox = document.querySelector(".date-container");
+    var adressInfo = document.querySelector(".date-container");
+    var followButton = document.querySelector("#follow-button");
 
-    if (moreText.style.display === "none") {
-        moreText.style.display = "block";
-        infoBox.style.visibility = "hidden";
-        btnText.innerHTML = "Dölj";
+    if (adressInfo.classList.contains("active")) {
+        adressInfo.classList.remove("active");
+        followButton.classList.remove("active");
     } else {
-        moreText.style.display = "none";
-        infoBox.style.visibility = "visible";
-        btnText.innerHTML = "Läs mer om datumparkering";
+        adressInfo.classList.add("active");
+        followButton.classList.add("active");
+
     }
 }
 
+
+/*
 $(document).ready(function () {
     $("#toggleButton").on("click", function () {
         $(".date-container").hide();
@@ -29,3 +26,15 @@ $(document).ready(function () {
         $(this).hide();
     });
 });
+*/
+
+
+
+
+function rotateIcon() {
+    const icon = document.querySelector('#chevron');
+    icon.classList.toggle('fa-rotate-180');
+}
+
+
+    
