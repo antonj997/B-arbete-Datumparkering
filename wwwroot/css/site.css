@@ -115,13 +115,13 @@ body {
 }
 
 #more {
+    position:absolute;
     padding: 20px;
     padding-bottom: 40px;
-    margin: 0;
     height:fit-content;
     border: 4px dashed #9381FF;
     background-color: #F8F7FF;
-    z-index: 3;
+    z-index: 1;
     animation: slide .4s ease-in;
 }
 
@@ -162,8 +162,13 @@ body {
     width: 4rem;
     height: 4rem;
     border: none;
+    z-index: -1;
 }
 
 .active {
     color: #9381FF;
 }
+
+
+
+/*------------------------------------------------------*/
