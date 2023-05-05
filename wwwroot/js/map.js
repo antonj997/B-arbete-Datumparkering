@@ -276,7 +276,7 @@ function initMap() {
 
 
         // Center the map over the marker
-        if (followButton.classList.contains("active")) {
+        if (followButton.classList.contains("follow")) {
             map.setCenter(pos);
         }
         
