@@ -240,17 +240,15 @@ function initMap() {
     });
 
     var followButton = document.getElementById("follow-button");
-    followButton.classList.toggle("active");
+    followButton.classList.toggle("follow");
 
     followButton.addEventListener("click", function () {
-        this.classList.toggle("active");
-        console.log("toggled");
+        this.classList.toggle("follow");
     });
 
     map.addListener("dragstart", function () {
-        if (followButton.classList.contains("active")) {
-            followButton.classList.remove("active");
-            console.log("removed toggle");
+        if (followButton.classList.contains("follow")) {
+            followButton.classList.remove("follow");
         }
     });
     // Watch for location changes
@@ -332,7 +330,7 @@ function addZoomChangeListener(map) {
     });
 }
 
-navigator.geolocation.watchPosition(successCallback, errorCallback, options);
+navigator.geolocation.watchPosition(errorCallback, options);
 function slowZoom(map) {
     setTimeout(function () {
         // zooma in på kartan från nivå 12 till 15 i 2 sekunder
@@ -533,17 +531,6 @@ function AddMarkerWithClick(map, event) {
     tapMarkers[0].addListener("click", () => {
         getInfowindow(tapMarker, map)
     });
-}
-
-function successCallback(position) {
-    const { accuracy, latitude, longitude, heading, speed } = position.coords;
-    // Show a map centered at latitude / longitude.
-    reqcount++;
-    details.innerHTML = "Accuracy: " + accuracy + "<br>";
-    details.innerHTML += "Latitude: " + latitude + " | Longitude: " + longitude + "<br>";
-    details.innerHTML += "Heading: " + heading + "<br>";
-    details.innerHTML += "Speed: " + speed + "<br>";
-    details.innerHTML += "reqcount: " + reqcount;
 }
 
 function errorCallback(error) {

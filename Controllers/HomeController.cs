@@ -33,6 +33,15 @@ namespace Datumparkering.Controllers
             int day = today.Day;
             return day % 2 == 0;
         }
+
+        public string EvenOrOdd()
+        {
+            if (IsTodayDateEven())
+            {
+                return "ojämnt";
+            }
+            else { return "jämnt"; }
+        }
         public string GetParkingMessage(int houseNumber)
         {
             bool isOddHouseNumber = houseNumber % 2 != 0;
@@ -65,7 +74,7 @@ namespace Datumparkering.Controllers
         public IActionResult Index()
         {
             ViewBag.apiConnectionString = configuration.GetConnectionString("GoogleMapsApiKey");
-
+            ViewBag.EvenOrOdd = EvenOrOdd();
             ViewBag.TodaysDate = GetTodaysDate();
             bool EvanDay = IsTodayDateEven();
             return View();
