@@ -38,9 +38,9 @@ namespace Datumparkering.Controllers
         {
             if (IsTodayDateEven())
             {
-                return "ojämnt";
+                return "jämnt";
             }
-            else { return "jämnt"; }
+            else { return "ojämnt"; }
         }
         public string GetParkingMessage(int houseNumber)
         {
