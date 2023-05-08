@@ -22,6 +22,7 @@
     <button class="searchBtn" onclick="search()">Sök</button>
 </div>
 
+
 <div class="ui-container">
     <button id="follow-button"><i class="fa-solid fa-crosshairs fa-3x"></i></button>
     <div class="info-container">
@@ -30,12 +31,28 @@
                 <label style="margin-right:10px;"><i class="fa-solid fa-location-dot" style="color: #9381ff;"></i></label>
                 <label id="parkingMessage"></label>
             </div>
+
         </div>
     </div>
     <button id="restoreButton" class="styled-button" onclick="showHide(), rotateIcon()">Inatt får du stå på <span>@ViewBag.EvenOrOdd </span>gatunummer <i id="chevron" class="fa-solid fa-chevron-up fa-rotate-180" style="color: #262626; margin-left: 2rem;"></i></button>
 </div>
 
 
+
+<button id="feedbackButton">Ge oss feedback</button>
+<div id="feedbackModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Ge oss feedback</h2>
+        <form id="feedbackForm" action="/Feedback/SendFeedback" method="POST">
+            <textarea id="feedbackMessage" name="feedbackMessage" rows="4" cols="50" placeholder="Skriv din feedback här..."></textarea>
+            <br>
+            <button type="submit">Skicka</button>
+        </form>
+    </div>
+</div>
+
 <div id="map">
+
 
 </div>

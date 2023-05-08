@@ -29,6 +29,33 @@ $(document).ready(function () {
 */
 
 
+document.getElementById("feedbackButton").addEventListener("click", function () {
+    document.getElementById("feedbackModal").style.display = "block";
+});
+
+document.getElementsByClassName("close")[0].addEventListener("click", function () {
+    document.getElementById("feedbackModal").style.display = "none";
+});
+
+document.getElementById("feedbackForm").addEventListener("submit", function (event) {
+    event.preventDefault(); // Förhindra formulärets standardbeteende (sidomladdning)
+    const feedbackMessage = document.getElementById("feedbackMessage").value;
+
+    fetch("/Feedback/SendFeedback", {
+        method: "POST",
+        body: new FormData(event.target),
+        headers: {
+            "Accept": "application/json"
+        }
+    }).then(response => {
+        if (response.ok) {
+            alert("Tack för din feedback!");
+        } else {
+            alert("Något gick fel. Försök igen senare.");
+        }
+        document.getElementById("feedbackModal").style.display = "none";
+    });
+});
 
 
 function rotateIcon() {
@@ -36,5 +63,4 @@ function rotateIcon() {
     icon.classList.toggle('fa-rotate-180');
 }
 
-
-    
+  
