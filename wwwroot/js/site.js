@@ -39,14 +39,14 @@ document.getElementsByClassName("close")[0].addEventListener("click", function (
 });
 
 document.getElementById("feedbackForm").addEventListener("submit", function (event) {
-    event.preventDefault();
+    event.preventDefault(); // Förhindra formulärets standardbeteende (sidomladdning)
     const feedbackMessage = document.getElementById("feedbackMessage").value;
 
-    fetch("send_feedback.php", {
+    fetch("/Feedback/SendFeedback", {
         method: "POST",
-        body: JSON.stringify({ message: feedbackMessage }),
+        body: new FormData(event.target),
         headers: {
-            "Content-Type": "application/json"
+            "Accept": "application/json"
         }
     }).then(response => {
         if (response.ok) {
