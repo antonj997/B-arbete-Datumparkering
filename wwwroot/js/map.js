@@ -220,11 +220,13 @@ function initMap() {
     google.maps.event.addListener(map, 'zoom_changed', function () {
         deletePolygons(polygons);
     });
-    
+
+    //adds line to specified roadsegments on the map
+    /*
      for (var i = 0; i < roadSegments.length; i++) {
          var segment = roadSegments[i];
          addLineToRoad(segment.origin, segment.destination, map, 2)
-     }
+     }*/
 
 
     // Click listener to display the info window over userPosition
@@ -426,6 +428,7 @@ function search() {
             searchMarkers[0].addListener("click", () => {
                 getInfowindow(searchMarker, map)
             });
+            slowZoom(map);
         } else {
             alert('Search was not successful for the following reason: ' + status);
         }
