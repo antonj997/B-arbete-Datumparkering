@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Datumparkering.styles.css" asp-append-version="true" />
+    <script src="~/js/site.js"></script>
 </head>
 <body>
     <header>
@@ -17,6 +18,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
@@ -25,11 +27,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Om Datumparkering</a>
                         </li>
+                        <li id="feedbackButton">Ge oss feedback</li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Ge oss feedback</h2>
+            <form id="feedbackForm" action="/Feedback/SendFeedback" method="POST">
+                <textarea id="feedbackMessage" name="feedbackMessage" rows="4" cols="50" placeholder="Skriv din feedback här..."></textarea>
+                <br>
+                <button type="submit">Skicka</button>
+            </form>
+        </div>
+    </div>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

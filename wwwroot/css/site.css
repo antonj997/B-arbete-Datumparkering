@@ -186,6 +186,11 @@ ui-container{
     background-color: rgba(0, 0, 0, 0.4);
 }
 
+#feedbackButton {
+   margin-top: 8px;
+   cursor: pointer;
+}
+
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto;
@@ -203,4 +208,9 @@ ui-container{
     margin:-3px;
 }
 
+@media screen and (max-width: 600px) {
+    #feedbackMessage {
+        width: 90%;
+    }
+}
 
