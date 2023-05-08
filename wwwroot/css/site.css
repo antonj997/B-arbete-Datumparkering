@@ -203,4 +203,6 @@ ui-container{
     margin:-3px;
 }
 
-
+#search-input::placeholder {
+    color: #9381FF;
+}
