@@ -426,6 +426,7 @@ function search() {
             searchMarkers[0].addListener("click", () => {
                 getInfowindow(searchMarker, map)
             });
+            slowZoom(map);
         } else {
             alert('Search was not successful for the following reason: ' + status);
         }
